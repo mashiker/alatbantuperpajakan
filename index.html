@@ -38,7 +38,7 @@
         .result-item { display: flex; justify-content: space-between; border-bottom: 1px solid #e5e7eb; padding-bottom: 0.5rem; margin-bottom: 0.5rem;}
         .app-header {
             background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
-            padding: 2rem;
+            padding: 1rem; /* Reduced padding */
             border-radius: 0.75rem;
             color: white;
             box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
@@ -58,8 +58,8 @@
 
     <div class="container mx-auto p-4 sm:p-6 lg:p-8 max-w-7xl">
         <header class="app-header relative text-center mb-8">
-            <h1 class="text-3xl sm:text-4xl font-bold tracking-tight">Archisight Tax Assistant</h1>
-            <p class="text-md sm:text-lg text-gray-300 mt-2">Kalkulator Pajak Profesional untuk Bisnis Anda</p>
+            <h1 class="text-2xl sm:text-3xl font-bold tracking-tight">Archisight Tax Assistant</h1>
+            <p class="text-sm sm:text-base text-gray-300 mt-1">Kalkulator Pajak Profesional untuk Bisnis Anda</p>
         </header>
         
         <div class="border-b border-gray-200 mb-6">
@@ -111,7 +111,7 @@
                 <div class="mb-6 flex justify-center border-b border-gray-200">
                     <div class="flex bg-gray-100 p-1 rounded-lg">
                         <button class="pph21-sub-tab-btn active px-4 py-2 text-sm font-semibold rounded-md" data-subtab="bulanan">Bulanan (TER)</button>
-                        <button class="pph21-sub-tab-btn px-4 py-2 text-sm font-semibold rounded-md" data-subtab="akhirtahun">Akhir Tahun</button>
+                        <button class="pph21-sub-tab-btn px-4 py-2 text-sm font-semibold rounded-md" data-subtab="akhirtahun">Masa Pajak Terakhir</button>
                     </div>
                 </div>
                 <div id="pph21-bulanan-content" class="pph21-sub-tab-content active">
@@ -160,8 +160,60 @@
                             <div id="import-result-pph21" class="hidden"><h4 class="text-lg font-semibold mb-2">Hasil Impor Data</h4><div class="table-responsive max-h-80 border rounded-lg"><table class="min-w-full text-sm whitespace-nowrap"></table></div><button id="export-excel-btn-pph21" class="mt-4 w-full bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-lg">Ekspor Hasil ke Excel</button></div>
                         </div>
                     </div>
-                    <div id="pph21-akhirtahun-content" class="pph21-sub-tab-content hidden">
-                        <!-- Konten Akhir Tahun -->
+                </div>
+                <div id="pph21-akhirtahun-content" class="pph21-sub-tab-content hidden">
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                        <!-- Left Column: Inputs -->
+                        <div class="space-y-6">
+                            <!-- A. Informasi Pegawai -->
+                            <div class="space-y-4 p-4 border rounded-lg">
+                                <h4 class="text-lg font-semibold border-b pb-2">A. Informasi Pegawai</h4>
+                                <div><label for="status-pegawai-tahunan" class="block text-sm font-medium text-gray-700">Status Pegawai</label><select id="status-pegawai-tahunan" class="form-select mt-1"><option value="tetap">Pegawai Tetap</option><option value="pensiunan">Pensiunan</option></select></div>
+                                <div><label for="status-kawin-tahunan" class="block text-sm font-medium text-gray-700">Status Perkawinan</label><select id="status-kawin-tahunan" class="form-select mt-1"><option value="TK">Tidak Kawin</option><option value="K">Kawin</option><option value="KI">Kawin (Penghasilan Istri Digabung)</option></select></div>
+                                <div><label for="tanggungan-tahunan" class="block text-sm font-medium text-gray-700">Jumlah Tanggungan</label><input type="number" id="tanggungan-tahunan" class="form-input mt-1" min="0" max="3" value="0"></div>
+                            </div>
+                
+                            <!-- B. Penghasilan Bruto Setahun -->
+                            <div class="space-y-4 p-4 border rounded-lg">
+                                 <h4 class="text-lg font-semibold border-b pb-2">B. Penghasilan Bruto Setahun</h4>
+                                 <div class="grid grid-cols-2 gap-x-4 gap-y-2 items-center">
+                                    <label class="text-sm font-medium">Gaji/Pensiun Setahun</label><input type="number" id="gaji-tahunan" class="form-input p21-income-tahunan" placeholder="0">
+                                    <label class="text-sm font-medium">Tunjangan PPh</label><input type="number" id="tunjangan-pph-tahunan" class="form-input p21-income-tahunan" placeholder="0">
+                                    <label class="text-sm font-medium">Tunjangan Lainnya, Uang Lembur, dll.</label><input type="number" id="tunjangan-lain-tahunan" class="form-input p21-income-tahunan" placeholder="0">
+                                    <label class="text-sm font-medium">Honorarium dan Imbalan Sejenis</label><input type="number" id="honorarium-tahunan" class="form-input p21-income-tahunan" placeholder="0">
+                                    <label class="text-sm font-medium">Premi Asuransi</label><input type="number" id="premi-asuransi-tahunan" class="form-input p21-income-tahunan" placeholder="0">
+                                    <label class="text-sm font-medium">Natura & Kenikmatan</label><input type="number" id="natura-tahunan" class="form-input p21-income-tahunan" placeholder="0">
+                                    <label class="text-sm font-medium">Bonus, THR, dsb.</label><input type="number" id="bonus-tahunan" class="form-input p21-income-tahunan" placeholder="0">
+                                    <label class="text-sm font-bold">Total Penghasilan Bruto</label><input type="text" id="total-bruto-tahunan" class="form-input bg-gray-100 font-bold" disabled>
+                                 </div>
+                            </div>
+                
+                            <!-- C. Pengurang -->
+                            <div class="space-y-4 p-4 border rounded-lg">
+                                <h4 class="text-lg font-semibold border-b pb-2">C. Pengurang</h4>
+                                <div class="grid grid-cols-2 gap-x-4 gap-y-2 items-center">
+                                    <label class="text-sm font-medium">Iuran Pensiun / THT / JHT</label><input type="number" id="iuran-pensiun-tahunan" class="form-input p21-pengurang-tahunan" placeholder="0">
+                                    <label class="text-sm font-medium">Zakat/Sumbangan Wajib</label><input type="number" id="zakat-tahunan" class="form-input p21-pengurang-tahunan" placeholder="0">
+                                    <label class="text-sm font-medium">Biaya Jabatan/Pensiun</label><input type="text" id="biaya-jabatan-pensiun-tahunan" class="form-input bg-gray-100" disabled>
+                                    <label class="text-sm font-bold">Jumlah Pengurang</label><input type="text" id="total-pengurang-tahunan" class="form-input bg-gray-100 font-bold" disabled>
+                                </div>
+                            </div>
+                
+                            <!-- D. PPh 21 Telah Dipotong -->
+                            <div class="space-y-4 p-4 border rounded-lg">
+                                 <h4 class="text-lg font-semibold border-b pb-2">D. PPh 21 Telah Dipotong</h4>
+                                 <div><label for="pph21-dipotong-sebelumnya" class="block text-sm font-medium text-gray-700">Total PPh 21 dipotong (Jan - Nov)</label><input type="number" id="pph21-dipotong-sebelumnya" class="form-input mt-1" placeholder="0"></div>
+                            </div>
+                            
+                            <div id="error-container-pph21-tahunan" class="my-4"></div>
+                            <div class="flex gap-4"><button id="resetBtn-pph21-tahunan" class="w-1/2 bg-gray-200 hover:bg-gray-300 font-bold py-2 px-4 rounded-lg">Reset</button><button id="calculateBtn-pph21-tahunan" class="w-1/2 btn-primary text-white font-bold py-2 px-4 rounded-lg">Hitung</button></div>
+                        </div>
+                
+                        <!-- Right Column: Results -->
+                        <div id="result-pph21-akhirtahun" class="p-4 bg-white border rounded-lg sticky top-6">
+                            <h4 class="text-lg font-semibold border-b pb-2 mb-4">E. Hasil Perhitungan</h4>
+                            <div class="text-center text-gray-500">Hasil perhitungan akan muncul di sini.</div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -224,6 +276,7 @@
                     <label for="donation-message" class="block text-sm font-medium text-gray-700 mb-1">Pesan</label>
                     <textarea id="donation-message" rows="3" class="form-input" placeholder="Tulis pesan dukungan..."></textarea>
                 </div>
+                <div id="donation-error-container" class="my-4"></div>
                 <button id="donate-btn" class="w-full btn-primary text-white font-bold py-3 px-8 rounded-lg text-lg">
                     Lanjutkan Pembayaran
                 </button>
@@ -232,6 +285,7 @@
     </div>
 
     <script>
+    // --- MAIN SCRIPT ---
     document.addEventListener('DOMContentLoaded', () => {
         
         // --- DATA & HELPER FUNCTIONS ---
@@ -254,7 +308,7 @@
             'KI0': { ptkp: 112500000, category: 'C' }, 'KI1': { ptkp: 117000000, category: 'C' },
             'KI2': { ptkp: 121500000, category: 'C' }, 'KI3': { ptkp: 126000000, category: 'C' }
         };
-        const ter_A = [ { from: 0, to: 5400000, rate: 0 }, { from: 5400001, to: 5650000, rate: 0.0025 }, { from: 5650001, to: 5950000, rate: 0.005 }, { from: 5950001, to: 6300000, rate: 0.0075 }, { from: 6300001, to: 6750000, rate: 0.01 }, { from: 6750001, to: 7500000, rate: 0.0125 }, { from: 7500001, to: 8550000, rate: 0.015 }, { from: 8550001, to: 9650000, rate: 0.0175 }, { from: 9650001, to: 10700000, rate: 0.02 }, { from: 10700001, to: 11600000, rate: 0.0225 }, { from: 11600001, to: 12500000, rate: 0.025 }, { from: 12500001, to: 13400000, rate: 0.03 }, { from: 13400001, to: 14500000, rate: 0.04 }, { from: 14500001, to: 15800000, rate: 0.05 }, { from: 15800001, to: 17400000, rate: 0.06 }, { from: 17400001, to: 19400000, rate: 0.07 }, { from: 19400001, to: 21800000, rate: 0.08 }, { from: 21800001, to: 24700000, rate: 0.09 }, { from: 24700001, to: 27900000, rate: 0.1 }, { from: 27900001, to: 31600000, rate: 0.11 }, { from: 31600001, to: 35700000, rate: 0.12 }, { from: 35700001, to: 40500000, rate: 0.13 }, { from: 40500001, to: 45800000, rate: 0.14 }, { from: 45800001, to: 53800000, rate: 0.15 }, { from: 53800001, to: 64000000, rate: 0.16 }, { from: 64000001, to: 75000000, rate: 0.17 }, { from: 75000001, to: 88000000, rate: 0.18 }, { from: 88000001, to: 103000000, rate: 0.19 }, { from: 103000001, to: 120000000, rate: 0.2 }, { from: 120000001, to: 140000000, rate: 0.21 }, { from: 140000001, to: 164000000, rate: 0.22 }, { from: 16400001, to: 195000000, rate: 0.23 }, { from: 195000001, to: 230000000, rate: 0.24 }, { from: 230000001, to: 270000000, rate: 0.25 }, { from: 270000001, to: 322000000, rate: 0.26 }, { from: 322000001, to: 385000000, rate: 0.27 }, { from: 385000001, to: 458000000, rate: 0.28 }, { from: 458000001, to: 550000000, rate: 0.29 }, { from: 550000001, to: 675000000, rate: 0.3 }, { from: 675000001, to: 825000000, rate: 0.31 }, { from: 825000001, to: 1025000000, rate: 0.32 }, { from: 1025000001, to: 1325000000, rate: 0.33 }, { from: 1325000001, to: Infinity, rate: 0.34 } ];
+        const ter_A = [ { from: 0, to: 5400000, rate: 0 }, { from: 5400001, to: 5650000, rate: 0.0025 }, { from: 5650001, to: 5950000, rate: 0.005 }, { from: 5950001, to: 6300000, rate: 0.0075 }, { from: 6300001, to: 6750000, rate: 0.01 }, { from: 6750001, to: 7500000, rate: 0.0125 }, { from: 7500001, to: 8550000, rate: 0.015 }, { from: 8550001, to: 9650000, rate: 0.0175 }, { from: 9650001, to: 10700000, rate: 0.02 }, { from: 10700001, to: 11600000, rate: 0.0225 }, { from: 11600001, to: 12500000, rate: 0.025 }, { from: 12500001, to: 13400000, rate: 0.03 }, { from: 13400001, to: 14500000, rate: 0.04 }, { from: 14500001, to: 15800000, rate: 0.05 }, { from: 15800001, to: 17400000, rate: 0.06 }, { from: 17400001, to: 19400000, rate: 0.07 }, { from: 19400001, to: 21800000, rate: 0.08 }, { from: 21800001, to: 24700000, rate: 0.09 }, { from: 24700001, to: 27900000, rate: 0.1 }, { from: 27900001, to: 31600000, rate: 0.11 }, { from: 31600001, to: 35700000, rate: 0.12 }, { from: 35700001, to: 40500000, rate: 0.13 }, { from: 40500001, to: 45800000, rate: 0.14 }, { from: 45800001, to: 53800000, rate: 0.15 }, { from: 53800001, to: 64000000, rate: 0.16 }, { from: 64000001, to: 75000000, rate: 0.17 }, { from: 7500001, to: 88000000, rate: 0.18 }, { from: 8800001, to: 103000000, rate: 0.19 }, { from: 103000001, to: 120000000, rate: 0.2 }, { from: 120000001, to: 140000000, rate: 0.21 }, { from: 140000001, to: 164000000, rate: 0.22 }, { from: 16400001, to: 195000000, rate: 0.23 }, { from: 195000001, to: 230000000, rate: 0.24 }, { from: 230000001, to: 270000000, rate: 0.25 }, { from: 270000001, to: 322000000, rate: 0.26 }, { from: 322000001, to: 385000000, rate: 0.27 }, { from: 385000001, to: 458000000, rate: 0.28 }, { from: 458000001, to: 550000000, rate: 0.29 }, { from: 550000001, to: 675000000, rate: 0.3 }, { from: 675000001, to: 825000000, rate: 0.31 }, { from: 825000001, to: 1025000000, rate: 0.32 }, { from: 1025000001, to: 1325000000, rate: 0.33 }, { from: 1325000001, to: Infinity, rate: 0.34 } ];
         const ter_B = [ { from: 0, to: 6200000, rate: 0 }, { from: 6200001, to: 6500000, rate: 0.0025 }, { from: 6500001, to: 6850000, rate: 0.005 }, { from: 68500001, to: 7300000, rate: 0.0075 }, { from: 7300001, to: 7800000, rate: 0.01 }, { from: 7800001, to: 8850000, rate: 0.0125 }, { from: 8850001, to: 10200000, rate: 0.015 }, { from: 10200001, to: 11250000, rate: 0.0175 }, { from: 11250001, to: 12750000, rate: 0.02 }, { from: 12750001, to: 14100000, rate: 0.0225 }, { from: 14100001, to: 15350000, rate: 0.025 }, { from: 15350001, to: 16600000, rate: 0.03 }, { from: 16600001, to: 18050000, rate: 0.04 }, { from: 18050001, to: 19800000, rate: 0.05 }, { from: 19800001, to: 21850000, rate: 0.06 }, { from: 21850001, to: 24250000, rate: 0.07 }, { from: 24250001, to: 27150000, rate: 0.08 }, { from: 27150001, to: 30550000, rate: 0.09 }, { from: 30550001, to: 34450000, rate: 0.1 }, { from: 34450001, to: 38850000, rate: 0.11 }, { from: 38850001, to: 43850000, rate: 0.12 }, { from: 43850001, to: 49450000, rate: 0.13 }, { from: 49450001, to: 56050000, rate: 0.14 }, { from: 56050001, to: 65250000, rate: 0.15 }, { from: 65250001, to: 76250000, rate: 0.16 }, { from: 76250001, to: 89250000, rate: 0.17 }, { from: 89250001, to: 104250000, rate: 0.18 }, { from: 104250001, to: 121250000, rate: 0.19 }, { from: 121250001, to: 141250000, rate: 0.2 }, { from: 141250001, to: 165250000, rate: 0.21 }, { from: 165250001, to: 196250000, rate: 0.22 }, { from: 196250001, to: 232250000, rate: 0.23 }, { from: 232250001, to: 273250000, rate: 0.24 }, { from: 273250001, to: 326250000, rate: 0.25 }, { from: 326250001, to: 390250000, rate: 0.26 }, { from: 390250001, to: 465250000, rate: 0.27 }, { from: 465250001, to: 560250000, rate: 0.28 }, { from: 560250001, to: 685250000, rate: 0.29 }, { from: 685250001, to: 835250000, rate: 0.3 }, { from: 835250001, to: 1045250000, rate: 0.31 }, { from: 1045250001, to: 1345250000, rate: 0.32 }, { from: 1345250001, to: Infinity, rate: 0.33 } ];
         const ter_C = [ { from: 0, to: 6600000, rate: 0 }, { from: 6600001, to: 6900000, rate: 0.0025 }, { from: 6900001, to: 7250000, rate: 0.005 }, { from: 7250001, to: 7700000, rate: 0.0075 }, { from: 7700001, to: 8950000, rate: 0.01 }, { from: 8950001, to: 10750000, rate: 0.0125 }, { from: 10750001, to: 11800000, rate: 0.015 }, { from: 11800001, to: 12950000, rate: 0.0175 }, { from: 12950001, to: 14250000, rate: 0.02 }, { from: 14250001, to: 15650000, rate: 0.0225 }, { from: 15650001, to: 16950000, rate: 0.025 }, { from: 16950001, to: 18450000, rate: 0.03 }, { from: 18450001, to: 20250000, rate: 0.04 }, { from: 20250001, to: 22150000, rate: 0.05 }, { from: 22150001, to: 24750000, rate: 0.06 }, { from: 24750001, to: 27650000, rate: 0.07 }, { from: 27650001, to: 31050000, rate: 0.08 }, { from: 31050001, to: 34950000, rate: 0.09 }, { from: 34950001, to: 39450000, rate: 0.1 }, { from: 39450001, to: 44450000, rate: 0.11 }, { from: 44450001, to: 50050000, rate: 0.12 }, { from: 50050001, to: 56650000, rate: 0.13 }, { from: 56650001, to: 65850000, rate: 0.14 }, { from: 65850001, to: 77050000, rate: 0.15 }, { from: 77050001, to: 89050000, rate: 0.16 }, { from: 89050001, to: 105050000, rate: 0.17 }, { from: 105050001, to: 122050000, rate: 0.18 }, { from: 122050001, to: 142050000, rate: 0.19 }, { from: 142050001, to: 167050000, rate: 0.2 }, { from: 167050001, to: 198050000, rate: 0.21 }, { from: 198050001, to: 235050000, rate: 0.22 }, { from: 235050001, to: 277050000, rate: 0.23 }, { from: 277050001, to: 331050000, rate: 0.24 }, { from: 331050001, to: 396050000, rate: 0.25 }, { from: 396050001, to: 472050000, rate: 0.26 }, { from: 472050001, to: 568050000, rate: 0.27 }, { from: 568050001, to: 695050000, rate: 0.28 }, { from: 695050001, to: 845050000, rate: 0.29 }, { from: 845050001, to: 1055050000, rate: 0.3 }, { from: 1055050001, to: 1355050000, rate: 0.31 }, { from: 1355050001, to: Infinity, rate: 0.32 } ];
         const ter_Harian = [ { from: 0, to: 450000, rate: 0 }, { from: 450001, to: 2500000, rate: 0.005 }, { from: 2500001, to: Infinity, rate: 0.025 } ];
@@ -275,13 +329,20 @@
                 });
             });
 
+            // Bulanan
             pph21Content.querySelectorAll('.p21-income').forEach(input => input.addEventListener('input', updateBrutoBulanan));
             pph21Content.querySelectorAll('input[name="tax-method"]').forEach(radio => radio.addEventListener('change', updateBrutoBulanan));
             pph21Content.querySelector('#calculateBtn-pph21-bulanan').addEventListener('click', calculatePph21Bulanan);
             pph21Content.querySelector('#resetBtn-pph21-bulanan').addEventListener('click', resetFormBulanan);
-
             pph21Content.querySelector('#template-excel-btn-pph21').addEventListener('click', downloadPph21Template);
             pph21Content.querySelector('#import-excel-pph21').addEventListener('change', handlePph21Import);
+
+            // Tahunan
+            pph21Content.querySelectorAll('#status-pegawai-tahunan, #status-kawin-tahunan').forEach(select => select.addEventListener('change', updateTahunanTotals));
+            pph21Content.querySelectorAll('.p21-income-tahunan, .p21-pengurang-tahunan, #tanggungan-tahunan').forEach(input => input.addEventListener('input', updateTahunanTotals));
+            pph21Content.querySelector('#calculateBtn-pph21-tahunan').addEventListener('click', calculatePph21AkhirTahun);
+            pph21Content.querySelector('#resetBtn-pph21-tahunan').addEventListener('click', resetFormTahunan);
+            updateTahunanTotals(); // Initial call to set calculated fields
         }
 
         function calculateTer(bruto, ptkpStatus) {
@@ -447,6 +508,156 @@
              XLSX.utils.book_append_sheet(wb, ws, "Hasil Impor PPh 21");
              XLSX.writeFile(wb, "Hasil_Impor_PPh_21_Bulanan.xlsx");
         }
+        
+        function getPtkpTahunan() {
+            const statusKawin = document.getElementById('status-kawin-tahunan').value; // TK, K, KI
+            const tanggunganEl = document.getElementById('tanggungan-tahunan');
+            const tanggungan = parseInt(tanggunganEl.value) || 0;
+
+            if (tanggungan < 0 || tanggungan > 3) {
+                showError('error-container-pph21-tahunan', 'Jumlah tanggungan harus antara 0 dan 3.');
+                tanggunganEl.value = 0; // Reset to valid value
+                return null;
+            }
+
+            const ptkpMatrix = {
+                'TK': [54000000, 58500000, 63000000, 67500000],
+                'K':  [58500000, 63000000, 67500000, 72000000],
+                'KI': [112500000, 117000000, 121500000, 126000000]
+            };
+
+            return ptkpMatrix[statusKawin][tanggungan];
+        }
+
+        function updateTahunanTotals() {
+            let bruto = 0;
+            document.querySelectorAll('.p21-income-tahunan').forEach(input => {
+                bruto += parseFloat(input.value) || 0;
+            });
+            document.getElementById('total-bruto-tahunan').value = `Rp ${formatNumber(bruto)}`;
+
+            const statusPegawai = document.getElementById('status-pegawai-tahunan').value;
+            const maxBiayaJabatan = statusPegawai === 'tetap' ? 6000000 : 2400000;
+            const biayaJabatan = Math.min(bruto * 0.05, maxBiayaJabatan);
+            document.getElementById('biaya-jabatan-pensiun-tahunan').value = `Rp ${formatNumber(biayaJabatan)}`;
+
+            const iuranPensiun = parseFloat(document.getElementById('iuran-pensiun-tahunan').value) || 0;
+            const zakat = parseFloat(document.getElementById('zakat-tahunan').value) || 0;
+            const totalPengurang = biayaJabatan + iuranPensiun + zakat;
+            document.getElementById('total-pengurang-tahunan').value = `Rp ${formatNumber(totalPengurang)}`;
+        }
+
+        function resetFormTahunan() {
+            document.querySelectorAll('#pph21-akhirtahun-content .form-input, #pph21-akhirtahun-content .form-select').forEach(el => {
+                if (el.tagName === 'SELECT') {
+                    el.selectedIndex = 0;
+                } else if (el.type !== 'button' && !el.disabled) {
+                    el.value = el.id === 'tanggungan-tahunan' ? '0' : '';
+                }
+            });
+            updateTahunanTotals(); // To reset calculated fields
+            document.getElementById('result-pph21-akhirtahun').innerHTML = `<h4 class="text-lg font-semibold border-b pb-2 mb-4">E. Hasil Perhitungan</h4><div class="text-center text-gray-500">Hasil perhitungan akan muncul di sini.</div>`;
+            clearError('error-container-pph21-tahunan');
+        }
+
+        function calculatePph21AkhirTahun() {
+            clearError('error-container-pph21-tahunan');
+            // Recalculate values to ensure they are numeric
+            let brutoSetahun = 0;
+            document.querySelectorAll('.p21-income-tahunan').forEach(input => {
+                brutoSetahun += parseFloat(input.value) || 0;
+            });
+
+            const statusPegawai = document.getElementById('status-pegawai-tahunan').value;
+            const maxBiayaJabatan = statusPegawai === 'tetap' ? 6000000 : 2400000;
+            const biayaJabatan = Math.min(brutoSetahun * 0.05, maxBiayaJabatan);
+            const iuranPensiun = parseFloat(document.getElementById('iuran-pensiun-tahunan').value) || 0;
+            const zakat = parseFloat(document.getElementById('zakat-tahunan').value) || 0;
+            const totalPengurang = biayaJabatan + iuranPensiun + zakat;
+
+            const pph21Dipotong = parseFloat(document.getElementById('pph21-dipotong-sebelumnya').value) || 0;
+            const resultDiv = document.getElementById('result-pph21-akhirtahun');
+            
+            const ptkpTahunan = getPtkpTahunan();
+            if (ptkpTahunan === null) return; // Error already shown by getPtkpTahunan
+
+            const nettoSetahun = brutoSetahun - totalPengurang;
+            const pkpSetahun = Math.max(0, Math.floor((nettoSetahun - ptkpTahunan) / 1000) * 1000);
+
+            let pphTerutang = 0;
+            let sisaPkp = pkpSetahun;
+            let detailPerhitungan = '';
+            const tarifLayers = [
+                { limit: 60000000, rate: 0.05 },
+                { limit: 250000000, rate: 0.15 },
+                { limit: 500000000, rate: 0.25 },
+                { limit: 5000000000, rate: 0.30 },
+                { limit: Infinity, rate: 0.35 }
+            ];
+            let batasBawah = 0;
+            
+            for (const layer of tarifLayers) {
+                if (sisaPkp <= 0) break;
+                const pkpDiLayer = Math.min(sisaPkp, layer.limit - batasBawah);
+                const pajakDiLayer = pkpDiLayer * layer.rate;
+                pphTerutang += pajakDiLayer;
+                if (pajakDiLayer > 0) {
+                    detailPerhitungan += `<li class="flex justify-between"><span>${(layer.rate * 100)}% &times; Rp ${formatNumber(pkpDiLayer)}</span> <span>= Rp ${formatNumber(pajakDiLayer)}</span></li>`;
+                }
+                sisaPkp -= pkpDiLayer;
+                batasBawah = layer.limit;
+            }
+
+            const pph21MasaTerakhir = pphTerutang - pph21Dipotong;
+            const statusPotong = pph21MasaTerakhir >= 0 ? "Kurang Bayar" : "Lebih Bayar";
+
+            resultDiv.innerHTML = `
+                <h4 class="font-bold text-lg mb-3 border-b pb-2">E. Hasil Perhitungan</h4>
+                <div class="space-y-2 text-sm">
+                    <!-- Step 1: Bruto to Neto -->
+                    <div class="font-semibold text-gray-700">1. Penghasilan Neto Setahun</div>
+                    <div class="pl-4 space-y-1 text-xs">
+                        <div class="flex justify-between"><span>Penghasilan Bruto Setahun</span> <span>Rp ${formatNumber(brutoSetahun)}</span></div>
+                        <div class="flex justify-between"><span>Total Pengurang</span> <span>- Rp ${formatNumber(totalPengurang)}</span></div>
+                        <div class="flex justify-between font-bold border-t pt-1 mt-1 text-sm"><span>Penghasilan Neto Setahun</span> <span>Rp ${formatNumber(nettoSetahun)}</span></div>
+                    </div>
+
+                    <!-- Step 2: Neto to PKP -->
+                    <div class="font-semibold text-gray-700 pt-3">2. Penghasilan Kena Pajak (PKP)</div>
+                    <div class="pl-4 space-y-1 text-xs">
+                        <div class="flex justify-between"><span>Penghasilan Neto Setahun</span> <span>Rp ${formatNumber(nettoSetahun)}</span></div>
+                        <div class="flex justify-between"><span>PTKP</span> <span>- Rp ${formatNumber(ptkpTahunan)}</span></div>
+                        <div class="flex justify-between font-bold border-t pt-1 mt-1 text-sm"><span>PKP Setahun (Dibulatkan)</span> <span>Rp ${formatNumber(pkpSetahun)}</span></div>
+                    </div>
+
+                    <!-- Step 3: PPh Terutang -->
+                    <div class="font-semibold text-gray-700 pt-3">3. PPh 21 Terutang Setahun (Tarif Psl. 17)</div>
+                    <div class="pl-4">
+                        <ul class="space-y-1 text-xs">${detailPerhitungan || '<li>Tidak ada PPh terutang.</li>'}</ul>
+                        <div class="flex justify-between font-bold border-t pt-1 mt-1 text-sm"><span>Total PPh Terutang Setahun</span> <span>Rp ${formatNumber(pphTerutang)}</span></div>
+                    </div>
+
+                    <!-- Step 4: PPh Masa Terakhir -->
+                    <div class="font-semibold text-gray-700 pt-3">4. PPh 21 Masa Pajak Terakhir</div>
+                    <div class="pl-4 space-y-1 text-xs">
+                        <div class="flex justify-between"><span>PPh Terutang Setahun</span> <span>Rp ${formatNumber(pphTerutang)}</span></div>
+                        <div class="flex justify-between"><span>Telah Dipotong (Jan-Nov)</span> <span>- Rp ${formatNumber(pph21Dipotong)}</span></div>
+                    </div>
+                </div>
+
+                <!-- Final Result -->
+                <div class="mt-4 pt-4 border-t-2 border-indigo-500">
+                    <div class="flex justify-between items-center">
+                        <span class="text-base font-semibold">PPh 21 Masa Pajak Terakhir</span>
+                        <span class="text-xl font-bold text-indigo-600">Rp ${formatNumber(Math.abs(pph21MasaTerakhir))}</span>
+                    </div>
+                    <p class="text-sm text-center font-semibold mt-2 text-gray-700">(${statusPotong})</p>
+                </div>
+                <div class="mt-4 text-xs p-2 bg-gray-100 rounded">
+                    <b>Catatan:</b> Jika Lebih Bayar, pemberi kerja wajib mengembalikan kelebihan potong kepada pegawai. PPh 21 terutang setahun ini menjadi kredit pajak di SPT Tahunan OP.
+                </div>
+            `;
+        }
 
         function setupUnifikasi() {
              const unifikasiContent = document.getElementById('unifikasi-content');
@@ -472,6 +683,8 @@
              
              unifikasiContent.querySelector('#add-row-btn-unifikasi').addEventListener('click', addUnifikasiRow);
              unifikasiContent.querySelector('#calculateBtn-unifikasi').addEventListener('click', calculateAllUnifikasi);
+             unifikasiContent.querySelector('#export-excel-btn-unifikasi').addEventListener('click', exportUnifikasiToExcel);
+             unifikasiContent.querySelector('#export-pdf-btn-unifikasi').addEventListener('click', exportUnifikasiToPDF);
 
              function calculateAllUnifikasi() {
                  clearError('error-container-unifikasi');
@@ -540,6 +753,68 @@
                  }
                  resultContainer.classList.remove('hidden');
              }
+
+            function exportUnifikasiToExcel() {
+                if (!lastUnifikasiResults || lastUnifikasiResults.length === 0) {
+                    showError('error-container-unifikasi', 'Tidak ada data untuk diekspor. Silakan hitung pajak terlebih dahulu.');
+                    return;
+                }
+                const exportData = lastUnifikasiResults.map(res => ({
+                    'No. Invoice': res.invoiceNo || '-',
+                    'Deskripsi': res.description,
+                    'DPP': res.dpp,
+                    'PPN': res.ppn,
+                    'PPh': res.pph,
+                    'Jumlah Tagihan/Pembayaran': res.actualPayment
+                }));
+
+                const ws = XLSX.utils.json_to_sheet(exportData);
+                ws['!cols'] = [{ wch: 15 }, { wch: 40 }, { wch: 15 }, { wch: 15 }, { wch: 15 }, { wch: 25 }];
+                const wb = XLSX.utils.book_new();
+                XLSX.utils.book_append_sheet(wb, ws, "Hasil PPh Unifikasi");
+                XLSX.writeFile(wb, "Hasil_Perhitungan_PPh_Unifikasi.xlsx");
+            }
+
+            function exportUnifikasiToPDF() {
+                if (!lastUnifikasiResults || lastUnifikasiResults.length === 0) {
+                    showError('error-container-unifikasi', 'Tidak ada data untuk diekspor. Silakan hitung pajak terlebih dahulu.');
+                    return;
+                }
+                const { jsPDF } = window.jspdf;
+                const doc = new jsPDF();
+
+                doc.text("Hasil Perhitungan PPh Unifikasi", 14, 15);
+
+                const tableColumn = ["No. Invoice", "Deskripsi", "DPP", "PPN", "PPh", "Jumlah"];
+                const tableRows = [];
+
+                lastUnifikasiResults.forEach(res => {
+                    const rowData = [
+                        res.invoiceNo || '-',
+                        res.description,
+                        formatNumber(res.dpp),
+                        formatNumber(res.ppn),
+                        formatNumber(res.pph),
+                        formatNumber(res.actualPayment)
+                    ];
+                    tableRows.push(rowData);
+                });
+
+                doc.autoTable({
+                    head: [tableColumn],
+                    body: tableRows,
+                    startY: 20,
+                    theme: 'striped',
+                    headStyles: { fillColor: [79, 70, 229] }, // Indigo color
+                    styles: { halign: 'right' },
+                    columnStyles: {
+                        0: { halign: 'left' },
+                        1: { halign: 'left' }
+                    }
+                });
+
+                doc.save('Hasil_Perhitungan_PPh_Unifikasi.pdf');
+            }
              
              addUnifikasiRow();
         }
@@ -582,6 +857,7 @@
             const donasiContent = document.getElementById('donasi-content');
             const donationAmountInput = donasiContent.querySelector('#donation-amount');
             const donationAmountBtns = donasiContent.querySelectorAll('.donation-amount-btn');
+            const errorContainer = donasiContent.querySelector('#donation-error-container');
             
             donationAmountBtns.forEach(btn => {
                 btn.addEventListener('click', () => {
@@ -596,12 +872,13 @@
             });
 
             donasiContent.querySelector('#donate-btn').addEventListener('click', () => {
+                errorContainer.innerHTML = ''; // Clear previous errors
                 const amount = document.getElementById('donation-amount').value;
                 const message = document.getElementById('donation-message').value;
                 const name = document.getElementById('donation-name').value;
                 
                 if(!amount || amount < 1000) {
-                    alert('Masukkan nominal donasi minimal Rp 1.000');
+                    errorContainer.innerHTML = `<div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg" role="alert">Masukkan nominal donasi minimal Rp 1.000</div>`;
                     return;
                 }
 
