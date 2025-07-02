@@ -173,22 +173,22 @@
                                 <div><label for="status-kawin-tahunan" class="block text-sm font-medium text-gray-700">Status Perkawinan</label><select id="status-kawin-tahunan" class="form-select mt-1"><option value="TK">Tidak Kawin</option><option value="K">Kawin</option><option value="KI">Kawin (Penghasilan Istri Digabung)</option></select></div>
                                 <div><label for="tanggungan-tahunan" class="block text-sm font-medium text-gray-700">Jumlah Tanggungan</label><input type="number" id="tanggungan-tahunan" class="form-input mt-1" min="0" max="3" value="0"></div>
                             </div>
-                
+                            
                             <!-- B. Penghasilan Bruto Setahun -->
                             <div class="space-y-4 p-4 border rounded-lg">
                                  <h4 class="text-lg font-semibold border-b pb-2">B. Penghasilan Bruto Setahun</h4>
                                  <div class="grid grid-cols-2 gap-x-4 gap-y-2 items-center">
-                                    <label class="text-sm font-medium">Gaji/Pensiun Setahun</label><input type="number" id="gaji-tahunan" class="form-input p21-income-tahunan" placeholder="0">
-                                    <label class="text-sm font-medium">Tunjangan PPh</label><input type="number" id="tunjangan-pph-tahunan" class="form-input p21-income-tahunan" placeholder="0">
-                                    <label class="text-sm font-medium">Tunjangan Lainnya, Uang Lembur, dll.</label><input type="number" id="tunjangan-lain-tahunan" class="form-input p21-income-tahunan" placeholder="0">
-                                    <label class="text-sm font-medium">Honorarium dan Imbalan Sejenis</label><input type="number" id="honorarium-tahunan" class="form-input p21-income-tahunan" placeholder="0">
-                                    <label class="text-sm font-medium">Premi Asuransi</label><input type="number" id="premi-asuransi-tahunan" class="form-input p21-income-tahunan" placeholder="0">
-                                    <label class="text-sm font-medium">Natura & Kenikmatan</label><input type="number" id="natura-tahunan" class="form-input p21-income-tahunan" placeholder="0">
-                                    <label class="text-sm font-medium">Bonus, THR, dsb.</label><input type="number" id="bonus-tahunan" class="form-input p21-income-tahunan" placeholder="0">
-                                    <label class="text-sm font-bold">Total Penghasilan Bruto</label><input type="text" id="total-bruto-tahunan" class="form-input bg-gray-100 font-bold" disabled>
+                                     <label class="text-sm font-medium">Gaji/Pensiun Setahun</label><input type="number" id="gaji-tahunan" class="form-input p21-income-tahunan" placeholder="0">
+                                     <label class="text-sm font-medium">Tunjangan PPh</label><input type="number" id="tunjangan-pph-tahunan" class="form-input p21-income-tahunan" placeholder="0">
+                                     <label class="text-sm font-medium">Tunjangan Lainnya, Uang Lembur, dll.</label><input type="number" id="tunjangan-lain-tahunan" class="form-input p21-income-tahunan" placeholder="0">
+                                     <label class="text-sm font-medium">Honorarium dan Imbalan Sejenis</label><input type="number" id="honorarium-tahunan" class="form-input p21-income-tahunan" placeholder="0">
+                                     <label class="text-sm font-medium">Premi Asuransi</label><input type="number" id="premi-asuransi-tahunan" class="form-input p21-income-tahunan" placeholder="0">
+                                     <label class="text-sm font-medium">Natura & Kenikmatan</label><input type="number" id="natura-tahunan" class="form-input p21-income-tahunan" placeholder="0">
+                                     <label class="text-sm font-medium">Bonus, THR, dsb.</label><input type="number" id="bonus-tahunan" class="form-input p21-income-tahunan" placeholder="0">
+                                     <label class="text-sm font-bold">Total Penghasilan Bruto</label><input type="text" id="total-bruto-tahunan" class="form-input bg-gray-100 font-bold" disabled>
                                  </div>
                             </div>
-                
+                            
                             <!-- C. Pengurang -->
                             <div class="space-y-4 p-4 border rounded-lg">
                                 <h4 class="text-lg font-semibold border-b pb-2">C. Pengurang</h4>
@@ -199,7 +199,7 @@
                                     <label class="text-sm font-bold">Jumlah Pengurang</label><input type="text" id="total-pengurang-tahunan" class="form-input bg-gray-100 font-bold" disabled>
                                 </div>
                             </div>
-                
+                            
                             <!-- D. PPh 21 Telah Dipotong -->
                             <div class="space-y-4 p-4 border rounded-lg">
                                  <h4 class="text-lg font-semibold border-b pb-2">D. PPh 21 Telah Dipotong</h4>
@@ -209,7 +209,7 @@
                             <div id="error-container-pph21-tahunan" class="my-4"></div>
                             <div class="flex gap-4"><button id="resetBtn-pph21-tahunan" class="w-1/2 bg-gray-200 hover:bg-gray-300 font-bold py-2 px-4 rounded-lg">Reset</button><button id="calculateBtn-pph21-tahunan" class="w-1/2 btn-primary text-white font-bold py-2 px-4 rounded-lg">Hitung</button></div>
                         </div>
-                
+                        
                         <!-- Right Column: Results -->
                         <div id="result-pph21-akhirtahun" class="p-4 bg-white border rounded-lg sticky top-6">
                             <h4 class="text-lg font-semibold border-b pb-2 mb-4">E. Hasil Perhitungan</h4>
@@ -238,8 +238,8 @@
                     <p class="text-yellow-700">Tuan Budi (status K/1, menikah dengan 1 tanggungan) memiliki penghasilan bruto sebulan sebesar Rp 10.000.000. Berapa PPh 21 yang harus dipotong?</p>
                     <ol class="list-decimal list-inside mt-2 text-yellow-700 space-y-1">
                         <li><b>Tentukan Kategori:</b> Status K/1 masuk ke dalam <b>Kategori B</b>.</li>
-                        <li><b>Cari Tarif di Tabel TER B:</b> Penghasilan Rp 10.000.000 berada di rentang Rp 8.850.001 s.d. Rp 10.200.000. Tarif TER yang berlaku adalah <b>1.50%</b>.</li>
-                        <li><b>Hitung PPh 21:</b> Rp 10.000.000 x 1.50% = <b>Rp 150.000</b>.</li>
+                        <li><b>Cari Tarif di Tabel TER B:</b> Penghasilan Rp 10.000.000 berada di rentang Rp 9.200.001 s.d. Rp 10.750.000. Tarif TER yang berlaku adalah <b>1.5%</b>.</li>
+                        <li><b>Hitung PPh 21:</b> Rp 10.000.000 x 1.5% = <b>Rp 150.000</b>.</li>
                     </ol>
                 </div>
                 <div class="mb-6 flex justify-center border-b border-gray-200">
@@ -309,10 +309,13 @@
             'KI0': { ptkp: 112500000, category: 'C' }, 'KI1': { ptkp: 117000000, category: 'C' },
             'KI2': { ptkp: 121500000, category: 'C' }, 'KI3': { ptkp: 126000000, category: 'C' }
         };
-        const ter_A = [ { from: 0, to: 5400000, rate: 0 }, { from: 5400001, to: 5650000, rate: 0.0025 }, { from: 5650001, to: 5950000, rate: 0.005 }, { from: 5950001, to: 6300000, rate: 0.0075 }, { from: 6300001, to: 6750000, rate: 0.01 }, { from: 6750001, to: 7500000, rate: 0.0125 }, { from: 7500001, to: 8550000, rate: 0.015 }, { from: 8550001, to: 9650000, rate: 0.0175 }, { from: 9650001, to: 10700000, rate: 0.02 }, { from: 10700001, to: 11600000, rate: 0.0225 }, { from: 11600001, to: 12500000, rate: 0.025 }, { from: 12500001, to: 13400000, rate: 0.03 }, { from: 13400001, to: 14500000, rate: 0.04 }, { from: 14500001, to: 15800000, rate: 0.05 }, { from: 15800001, to: 17400000, rate: 0.06 }, { from: 17400001, to: 19400000, rate: 0.07 }, { from: 19400001, to: 21800000, rate: 0.08 }, { from: 21800001, to: 24700000, rate: 0.09 }, { from: 24700001, to: 27900000, rate: 0.1 }, { from: 27900001, to: 31600000, rate: 0.11 }, { from: 31600001, to: 35700000, rate: 0.12 }, { from: 35700001, to: 40500000, rate: 0.13 }, { from: 40500001, to: 45800000, rate: 0.14 }, { from: 45800001, to: 53800000, rate: 0.15 }, { from: 53800001, to: 64000000, rate: 0.16 }, { from: 64000001, to: 75000000, rate: 0.17 }, { from: 7500001, to: 88000000, rate: 0.18 }, { from: 8800001, to: 103000000, rate: 0.19 }, { from: 103000001, to: 120000000, rate: 0.2 }, { from: 120000001, to: 140000000, rate: 0.21 }, { from: 140000001, to: 164000000, rate: 0.22 }, { from: 16400001, to: 195000000, rate: 0.23 }, { from: 195000001, to: 230000000, rate: 0.24 }, { from: 230000001, to: 270000000, rate: 0.25 }, { from: 270000001, to: 322000000, rate: 0.26 }, { from: 322000001, to: 385000000, rate: 0.27 }, { from: 385000001, to: 458000000, rate: 0.28 }, { from: 458000001, to: 550000000, rate: 0.29 }, { from: 550000001, to: 675000000, rate: 0.3 }, { from: 675000001, to: 825000000, rate: 0.31 }, { from: 825000001, to: 1025000000, rate: 0.32 }, { from: 1025000001, to: 1325000000, rate: 0.33 }, { from: 1325000001, to: Infinity, rate: 0.34 } ];
-        const ter_B = [ { from: 0, to: 6200000, rate: 0 }, { from: 6200001, to: 6500000, rate: 0.0025 }, { from: 6500001, to: 6850000, rate: 0.005 }, { from: 68500001, to: 7300000, rate: 0.0075 }, { from: 7300001, to: 7800000, rate: 0.01 }, { from: 7800001, to: 8850000, rate: 0.0125 }, { from: 8850001, to: 10200000, rate: 0.015 }, { from: 10200001, to: 11250000, rate: 0.0175 }, { from: 11250001, to: 12750000, rate: 0.02 }, { from: 12750001, to: 14100000, rate: 0.0225 }, { from: 14100001, to: 15350000, rate: 0.025 }, { from: 15350001, to: 16600000, rate: 0.03 }, { from: 16600001, to: 18050000, rate: 0.04 }, { from: 18050001, to: 19800000, rate: 0.05 }, { from: 19800001, to: 21850000, rate: 0.06 }, { from: 21850001, to: 24250000, rate: 0.07 }, { from: 24250001, to: 27150000, rate: 0.08 }, { from: 27150001, to: 30550000, rate: 0.09 }, { from: 30550001, to: 34450000, rate: 0.1 }, { from: 34450001, to: 38850000, rate: 0.11 }, { from: 38850001, to: 43850000, rate: 0.12 }, { from: 43850001, to: 49450000, rate: 0.13 }, { from: 49450001, to: 56050000, rate: 0.14 }, { from: 56050001, to: 65250000, rate: 0.15 }, { from: 65250001, to: 76250000, rate: 0.16 }, { from: 76250001, to: 89250000, rate: 0.17 }, { from: 89250001, to: 104250000, rate: 0.18 }, { from: 104250001, to: 121250000, rate: 0.19 }, { from: 121250001, to: 141250000, rate: 0.2 }, { from: 141250001, to: 165250000, rate: 0.21 }, { from: 165250001, to: 196250000, rate: 0.22 }, { from: 196250001, to: 232250000, rate: 0.23 }, { from: 232250001, to: 273250000, rate: 0.24 }, { from: 273250001, to: 326250000, rate: 0.25 }, { from: 326250001, to: 390250000, rate: 0.26 }, { from: 390250001, to: 465250000, rate: 0.27 }, { from: 465250001, to: 560250000, rate: 0.28 }, { from: 560250001, to: 685250000, rate: 0.29 }, { from: 685250001, to: 835250000, rate: 0.3 }, { from: 835250001, to: 1045250000, rate: 0.31 }, { from: 1045250001, to: 1345250000, rate: 0.32 }, { from: 1345250001, to: Infinity, rate: 0.33 } ];
-        const ter_C = [ { from: 0, to: 6600000, rate: 0 }, { from: 6600001, to: 6900000, rate: 0.0025 }, { from: 6900001, to: 7250000, rate: 0.005 }, { from: 7250001, to: 7700000, rate: 0.0075 }, { from: 7700001, to: 8950000, rate: 0.01 }, { from: 8950001, to: 10750000, rate: 0.0125 }, { from: 10750001, to: 11800000, rate: 0.015 }, { from: 11800001, to: 12950000, rate: 0.0175 }, { from: 12950001, to: 14250000, rate: 0.02 }, { from: 14250001, to: 15650000, rate: 0.0225 }, { from: 15650001, to: 16950000, rate: 0.025 }, { from: 16950001, to: 18450000, rate: 0.03 }, { from: 18450001, to: 20250000, rate: 0.04 }, { from: 20250001, to: 22150000, rate: 0.05 }, { from: 22150001, to: 24750000, rate: 0.06 }, { from: 24750001, to: 27650000, rate: 0.07 }, { from: 27650001, to: 31050000, rate: 0.08 }, { from: 31050001, to: 34950000, rate: 0.09 }, { from: 34950001, to: 39450000, rate: 0.1 }, { from: 39450001, to: 44450000, rate: 0.11 }, { from: 44450001, to: 50050000, rate: 0.12 }, { from: 50050001, to: 56650000, rate: 0.13 }, { from: 56650001, to: 65850000, rate: 0.14 }, { from: 65850001, to: 77050000, rate: 0.15 }, { from: 77050001, to: 89050000, rate: 0.16 }, { from: 89050001, to: 105050000, rate: 0.17 }, { from: 105050001, to: 122050000, rate: 0.18 }, { from: 122050001, to: 142050000, rate: 0.19 }, { from: 142050001, to: 167050000, rate: 0.2 }, { from: 167050001, to: 198050000, rate: 0.21 }, { from: 198050001, to: 235050000, rate: 0.22 }, { from: 235050001, to: 277050000, rate: 0.23 }, { from: 277050001, to: 331050000, rate: 0.24 }, { from: 331050001, to: 396050000, rate: 0.25 }, { from: 396050001, to: 472050000, rate: 0.26 }, { from: 472050001, to: 568050000, rate: 0.27 }, { from: 568050001, to: 695050000, rate: 0.28 }, { from: 695050001, to: 845050000, rate: 0.29 }, { from: 845050001, to: 1055050000, rate: 0.3 }, { from: 1055050001, to: 1355050000, rate: 0.31 }, { from: 1355050001, to: Infinity, rate: 0.32 } ];
-        const ter_Harian = [ { from: 0, to: 450000, rate: 0 }, { from: 450001, to: 2500000, rate: 0.005 }, { from: 2500001, to: Infinity, rate: 0.025 } ];
+
+        // --- UPDATED TER RATES (from PMK 168/2023 based on provided CSV) ---
+        const ter_Harian = [{ from: 0, to: 450000, rate: 0.0 }, { from: 450001, to: 2500000, rate: 0.005 }];
+        const ter_A = [{ from: 0, to: 5400000, rate: 0.0 }, { from: 5400001, to: 5650000, rate: 0.0025 }, { from: 5650001, to: 5950000, rate: 0.005 }, { from: 5950001, to: 6300000, rate: 0.0075 }, { from: 6300001, to: 6750000, rate: 0.01 }, { from: 6750001, to: 7500000, rate: 0.0125 }, { from: 7500001, to: 8550000, rate: 0.015 }, { from: 8550001, to: 9650000, rate: 0.0175 }, { from: 9650001, to: 10050000, rate: 0.02 }, { from: 10050001, to: 10350000, rate: 0.0225 }, { from: 10350001, to: 10700000, rate: 0.025 }, { from: 10700001, to: 11050000, rate: 0.03 }, { from: 11050001, to: 11600000, rate: 0.035 }, { from: 11600001, to: 12500000, rate: 0.04 }, { from: 12500001, to: 13750000, rate: 0.05 }, { from: 13750001, to: 15100000, rate: 0.06 }, { from: 15100001, to: 16950000, rate: 0.07 }, { from: 16950001, to: 19750000, rate: 0.08 }, { from: 19750001, to: 24150000, rate: 0.09 }, { from: 24150001, to: 26450000, rate: 0.1 }, { from: 26450001, to: 28000000, rate: 0.11 }, { from: 28000001, to: 30050000, rate: 0.12 }, { from: 30050001, to: 32400000, rate: 0.13 }, { from: 32400001, to: 35400000, rate: 0.14 }, { from: 35400001, to: 39100000, rate: 0.15 }, { from: 39100001, to: 43850000, rate: 0.16 }, { from: 43850001, to: 47800000, rate: 0.17 }, { from: 47800001, to: 51400000, rate: 0.18 }, { from: 51400001, to: 56300000, rate: 0.19 }, { from: 56300001, to: 62200000, rate: 0.2 }, { from: 62200001, to: 68600000, rate: 0.21 }, { from: 68600001, to: 77500000, rate: 0.22 }, { from: 77500001, to: 89000000, rate: 0.23 }, { from: 89000001, to: 103000000, rate: 0.24 }, { from: 103000001, to: 125000000, rate: 0.25 }, { from: 125000001, to: 157000000, rate: 0.26 }, { from: 157000001, to: 206000000, rate: 0.27 }, { from: 206000001, to: 337000000, rate: 0.28 }, { from: 337000001, to: 454000000, rate: 0.29 }, { from: 454000001, to: 550000000, rate: 0.3 }, { from: 550000001, to: 695000000, rate: 0.31 }, { from: 695000001, to: 910000000, rate: 0.32 }, { from: 910000001, to: 1400000000, rate: 0.33 }, { from: 1400000001, to: Infinity, rate: 0.34 }];
+        const ter_B = [{ from: 0, to: 6200000, rate: 0.0 }, { from: 6200001, to: 6500000, rate: 0.0025 }, { from: 6500001, to: 6850000, rate: 0.005 }, { from: 6850001, to: 7300000, rate: 0.0075 }, { from: 7300001, to: 9200000, rate: 0.01 }, { from: 9200001, to: 10750000, rate: 0.015 }, { from: 10750001, to: 11250000, rate: 0.02 }, { from: 11250001, to: 11600000, rate: 0.025 }, { from: 11600001, to: 12600000, rate: 0.03 }, { from: 12600001, to: 13600000, rate: 0.04 }, { from: 13600001, to: 14950000, rate: 0.05 }, { from: 14950001, to: 16400000, rate: 0.06 }, { from: 16400001, to: 18450000, rate: 0.07 }, { from: 18450001, to: 21850000, rate: 0.08 }, { from: 21850001, to: 26000000, rate: 0.09 }, { from: 26000001, to: 27700000, rate: 0.1 }, { from: 27700001, to: 29350000, rate: 0.11 }, { from: 29350001, to: 31450000, rate: 0.12 }, { from: 31450001, to: 33950000, rate: 0.13 }, { from: 33950001, to: 37100000, rate: 0.14 }, { from: 37100001, to: 41100000, rate: 0.15 }, { from: 41100001, to: 45800000, rate: 0.16 }, { from: 45800001, to: 49500000, rate: 0.17 }, { from: 49500001, to: 53800000, rate: 0.18 }, { from: 53800001, to: 58500000, rate: 0.19 }, { from: 58500001, to: 64000000, rate: 0.2 }, { from: 64000001, to: 71000000, rate: 0.21 }, { from: 71000001, to: 80000000, rate: 0.22 }, { from: 80000001, to: 93000000, rate: 0.23 }, { from: 93000001, to: 109000000, rate: 0.24 }, { from: 109000001, to: 129000000, rate: 0.25 }, { from: 129000001, to: 163000000, rate: 0.26 }, { from: 163000001, to: 211000000, rate: 0.27 }, { from: 211000001, to: 374000000, rate: 0.28 }, { from: 374000001, to: 459000000, rate: 0.29 }, { from: 459000001, to: 555000000, rate: 0.3 }, { from: 555000001, to: 704000000, rate: 0.31 }, { from: 704000001, to: 957000000, rate: 0.32 }, { from: 957000001, to: 1405000000, rate: 0.33 }, { from: 1405000001, to: Infinity, rate: 0.34 }];
+        const ter_C = [{ from: 0, to: 6600000, rate: 0.0 }, { from: 6600001, to: 6950000, rate: 0.0025 }, { from: 6950001, to: 7350000, rate: 0.005 }, { from: 7350001, to: 7800000, rate: 0.0075 }, { from: 7800001, to: 8850000, rate: 0.01 }, { from: 8850001, to: 9800000, rate: 0.0125 }, { from: 9800001, to: 10950000, rate: 0.015 }, { from: 10950001, to: 11200000, rate: 0.0175 }, { from: 11200001, to: 12050000, rate: 0.02 }, { from: 12050001, to: 12950000, rate: 0.03 }, { from: 12950001, to: 14150000, rate: 0.04 }, { from: 14150001, to: 15550000, rate: 0.05 }, { from: 15550001, to: 17050000, rate: 0.06 }, { from: 17050001, to: 19500000, rate: 0.07 }, { from: 19500001, to: 22700000, rate: 0.08 }, { from: 22700001, to: 26600000, rate: 0.09 }, { from: 26600001, to: 28100000, rate: 0.1 }, { from: 28100001, to: 30100000, rate: 0.11 }, { from: 30100001, to: 32600000, rate: 0.12 }, { from: 32600001, to: 35400000, rate: 0.13 }, { from: 35400001, to: 38900000, rate: 0.14 }, { from: 38900001, to: 43000000, rate: 0.15 }, { from: 43000001, to: 47400000, rate: 0.16 }, { from: 47400001, to: 51200000, rate: 0.17 }, { from: 51200001, to: 55800000, rate: 0.18 }, { from: 55800001, to: 60400000, rate: 0.19 }, { from: 60400001, to: 66700000, rate: 0.2 }, { from: 66700001, to: 74500000, rate: 0.21 }, { from: 74500001, to: 83200000, rate: 0.22 }, { from: 83200001, to: 95600000, rate: 0.23 }, { from: 95600001, to: 110000000, rate: 0.24 }, { from: 110000001, to: 134000000, rate: 0.25 }, { from: 134000001, to: 169000000, rate: 0.26 }, { from: 169000001, to: 221000000, rate: 0.27 }, { from: 221000001, to: 390000000, rate: 0.28 }, { from: 390000001, to: 463000000, rate: 0.29 }, { from: 463000001, to: 561000000, rate: 0.3 }, { from: 561000001, to: 709000000, rate: 0.31 }, { from: 709000001, to: 965000000, rate: 0.32 }, { from: 965000001, to: 1419000000, rate: 0.33 }, { from: 1419000001, to: Infinity, rate: 0.34 }];
+        
         const ptkpOptions = [ { value: 'TK0', text: 'TK/0 - Tidak Kawin, 0 Tanggungan' }, { value: 'TK1', text: 'TK/1 - Tidak Kawin, 1 Tanggungan' }, { value: 'TK2', text: 'TK/2 - Tidak Kawin, 2 Tanggungan' }, { value: 'TK3', text: 'TK/3 - Tidak Kawin, 3 Tanggungan' }, { value: 'K0', text: 'K/0 - Kawin, 0 Tanggungan' }, { value: 'K1', text: 'K/1 - Kawin, 1 Tanggungan' }, { value: 'K2', text: 'K/2 - Kawin, 2 Tanggungan' }, { value: 'K3', text: 'K/3 - Kawin, 3 Tanggungan' }, { value: 'KI0', text: 'K/I/0 - Kawin (Istri Bekerja), 0 Tanggungan' }, { value: 'KI1', text: 'K/I/1 - Kawin (Istri Bekerja), 1 Tanggungan' }, { value: 'KI2', text: 'K/I/2 - Kawin (Istri Bekerja), 2 Tanggungan' }, { value: 'KI3', text: 'K/I/3 - Kawin (Istri Bekerja), 3 Tanggungan' } ];
 
         // --- PPh 21 LOGIC ---
@@ -348,7 +351,10 @@
 
         function calculateTer(bruto, ptkpStatus) {
             bruto = Math.round(bruto);
-            const category = ptkpRates[ptkpStatus]?.category || 'A';
+            const ptkpInfo = ptkpRates[ptkpStatus];
+            if (!ptkpInfo) return { pph21: 0, terRate: 0, category: 'N/A', bruto };
+
+            const category = ptkpInfo.category;
             const terTable = category === 'A' ? ter_A : (category === 'B' ? ter_B : ter_C);
             const foundRate = terTable.find(range => bruto >= range.from && bruto <= range.to);
             const terRate = foundRate ? foundRate.rate : 0;
@@ -440,7 +446,7 @@
                 category = terResult.category;
             }
 
-            resultDiv.innerHTML = `<h4 class="font-bold text-lg mb-3">Hasil Perhitungan</h4><div class="space-y-3 text-sm"><div class="result-item"><span>Penghasilan Bruto</span> <span class="font-semibold">Rp ${formatNumber(finalBruto)}</span></div><div class="result-item"><span>Status PTKP / Kategori</span> <span class="font-semibold">${ptkpStatus} / ${category}</span></div><div class="result-item"><span>Tarif Efektif (TER)</span> <span class="font-semibold">${(terRate * 100).toFixed(4)}%</span></div></div><div class="mt-4 pt-4 border-t-2 border-dashed"><div class="flex justify-between items-center"><span class="text-base font-semibold">PPh 21 Terutang Bulan Ini</span><span class="text-xl font-bold text-indigo-600">Rp ${formatNumber(pph21)}</span></div></div>`;
+            resultDiv.innerHTML = `<h4 class="font-bold text-lg mb-3">Hasil Perhitungan</h4><div class="space-y-3 text-sm"><div class="result-item"><span>Penghasilan Bruto</span> <span class="font-semibold">Rp ${formatNumber(finalBruto)}</span></div><div class="result-item"><span>Status PTKP / Kategori</span> <span class="font-semibold">${ptkpStatus} / ${category}</span></div><div class="result-item"><span>Tarif Efektif (TER)</span> <span class="font-semibold">${(terRate * 100).toFixed(4).replace(/\.?0+$/, '')}%</span></div></div><div class="mt-4 pt-4 border-t-2 border-dashed"><div class="flex justify-between items-center"><span class="text-base font-semibold">PPh 21 Terutang Bulan Ini</span><span class="text-xl font-bold text-indigo-600">Rp ${formatNumber(pph21)}</span></div></div>`;
         }
 
         function downloadPph21Template() {
@@ -813,21 +819,21 @@
                 }
             }
 
-             function displayUnifikasiResults(results) {
-                 const resultContainer = document.getElementById('result-container-unifikasi');
-                 const resultBody = document.getElementById('result-table-body-unifikasi');
-                 const resultFoot = document.getElementById('result-table-foot-unifikasi');
-                 resultBody.innerHTML = ''; resultFoot.innerHTML = '';
-                 let totalDpp = 0, totalPpn = 0, totalPph = 0, totalActual = 0;
-                 results.forEach(res => {
-                     totalDpp += res.dpp; totalPpn += res.ppn; totalPph += res.pph; totalActual += res.actualPayment;
-                     resultBody.innerHTML += `<tr><td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${res.invoiceNo || '-'}</td><td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${res.companyName || '-'}</td><td class="px-6 py-4 whitespace-nowrap text-sm font-medium">${res.description}</td><td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-right">${formatNumber(res.dpp)}</td><td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-right">${formatNumber(res.ppn)}</td><td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-right">${formatNumber(res.pph)}</td><td class="px-6 py-4 whitespace-nowrap text-sm font-semibold text-right">${formatNumber(res.actualPayment)}</td></tr>`;
-                 });
-                 if (results.length > 1) {
-                     resultFoot.innerHTML = `<tr><td class="px-6 py-4 text-left text-sm font-bold" colspan="3">JUMLAH</td><td class="px-6 py-4 text-right text-sm font-bold">${formatNumber(totalDpp)}</td><td class="px-6 py-4 text-right text-sm font-bold">${formatNumber(totalPpn)}</td><td class="px-6 py-4 text-right text-sm font-bold">${formatNumber(totalPph)}</td><td class="px-6 py-4 text-right text-sm font-bold">${formatNumber(totalActual)}</td></tr>`;
+                 function displayUnifikasiResults(results) {
+                      const resultContainer = document.getElementById('result-container-unifikasi');
+                      const resultBody = document.getElementById('result-table-body-unifikasi');
+                      const resultFoot = document.getElementById('result-table-foot-unifikasi');
+                      resultBody.innerHTML = ''; resultFoot.innerHTML = '';
+                      let totalDpp = 0, totalPpn = 0, totalPph = 0, totalActual = 0;
+                      results.forEach(res => {
+                          totalDpp += res.dpp; totalPpn += res.ppn; totalPph += res.pph; totalActual += res.actualPayment;
+                          resultBody.innerHTML += `<tr><td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${res.invoiceNo || '-'}</td><td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${res.companyName || '-'}</td><td class="px-6 py-4 whitespace-nowrap text-sm font-medium">${res.description}</td><td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-right">${formatNumber(res.dpp)}</td><td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-right">${formatNumber(res.ppn)}</td><td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-right">${formatNumber(res.pph)}</td><td class="px-6 py-4 whitespace-nowrap text-sm font-semibold text-right">${formatNumber(res.actualPayment)}</td></tr>`;
+                      });
+                      if (results.length > 1) {
+                          resultFoot.innerHTML = `<tr><td class="px-6 py-4 text-left text-sm font-bold" colspan="3">JUMLAH</td><td class="px-6 py-4 text-right text-sm font-bold">${formatNumber(totalDpp)}</td><td class="px-6 py-4 text-right text-sm font-bold">${formatNumber(totalPpn)}</td><td class="px-6 py-4 text-right text-sm font-bold">${formatNumber(totalPph)}</td><td class="px-6 py-4 text-right text-sm font-bold">${formatNumber(totalActual)}</td></tr>`;
+                      }
+                      resultContainer.classList.remove('hidden');
                  }
-                 resultContainer.classList.remove('hidden');
-             }
 
             function exportUnifikasiToExcel() {
                 if (!lastUnifikasiResults || lastUnifikasiResults.length === 0) {
@@ -903,9 +909,13 @@
             
             function createTerTable(data, category) {
                 const tableId = `ter-table-${category}`;
-                let tableHtml = `<div id="${tableId}" class="ter-sub-tab-content"><div class="table-responsive max-h-96"><table class="min-w-full divide-y divide-gray-200"><thead><tr><th class="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase">Penghasilan Bruto (Dari)</th><th class="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase">Penghasilan Bruto (Sampai)</th><th class="px-6 py-3 bg-gray-50 text-right text-xs font-medium text-gray-500 uppercase">Tarif Efektif (%)</th></tr></thead><tbody class="bg-white divide-y divide-gray-200">`;
+                let tableHtml = `<div id="${tableId}" class="ter-sub-tab-content"><div class="table-responsive max-h-96"><table class="min-w-full divide-y divide-gray-200"><thead><tr><th class="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase">Penghasilan Bruto (Dari)</th><th class="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase">Penghasilan Bruto (Sampai)</th><th class="px-6 py-3 bg-gray-50 text-right text-xs font-medium text-gray-500 uppercase">Tarif Efektif</th></tr></thead><tbody class="bg-white divide-y divide-gray-200">`;
                 data.forEach(row => {
-                    tableHtml += `<tr><td class="px-6 py-4 whitespace-nowrap text-sm">Rp ${formatNumber(row.from)}</td><td class="px-6 py-4 whitespace-nowrap text-sm">Rp ${formatNumber(row.to)}</td><td class="px-6 py-4 whitespace-nowrap text-sm text-right">${(row.rate * 100).toFixed(2)}%</td></tr>`;
+                    const fromValue = `Rp ${formatNumber(row.from)}`;
+                    const toValue = row.to === Infinity ? 'ke atas' : `Rp ${formatNumber(row.to)}`;
+                    // Use toFixed to handle floating point inaccuracies and remove trailing zeros
+                    const rateDisplay = (row.rate * 100).toFixed(4).replace(/\.?0+$/, "") + '%';
+                    tableHtml += `<tr><td class="px-6 py-4 whitespace-nowrap text-sm">${fromValue}</td><td class="px-6 py-4 whitespace-nowrap text-sm">${toValue}</td><td class="px-6 py-4 whitespace-nowrap text-sm text-right">${rateDisplay}</td></tr>`;
                 });
                 tableHtml += `</tbody></table></div></div>`;
                 return tableHtml;
