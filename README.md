@@ -18,14 +18,8 @@ Ekspor Hasil: Ekspor hasil perhitungan massal ke dalam file Excel yang terstrukt
 Privasi Data Terjamin
 Aplikasi ini dirancang dengan mengutamakan privasi Anda. Tidak ada data yang disimpan atau dikirim ke server mana pun. Semua proses kalkulasi terjadi sepenuhnya di perangkat (browser) Anda. Data akan otomatis hilang saat Anda menutup halaman.
 
-Cara Menggunakan & Hosting
-Aplikasi ini bersifat statis sehingga sangat mudah untuk dijalankan:
+Jika ingin menggunakan, dapat lakukan izin dan kontak pembuat
 
-Secara Lokal: Cukup buka file index.html di browser pilihan Anda.
-Hosting Online (Gratis):
-Netlify Drop: Seret folder proyek ke Netlify Drop untuk mendapatkan URL publik secara instan.
-GitHub Pages: Unggah folder ini ke repositori GitHub, lalu aktifkan fitur GitHub Pages dari menu pengaturan repositori.
-Kredit
 Aplikasi ini dibuat dan dikembangkan oleh Jevi S. untuk Archisight Nusantara.
 
 © 2025 Archisight Nusantara
