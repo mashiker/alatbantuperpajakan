@@ -81,6 +81,7 @@
                             <tr>
                                 <th class="py-2 px-2 text-left text-sm font-semibold text-gray-600 w-12">No</th>
                                 <th class="py-2 px-2 text-left text-sm font-semibold text-gray-600 min-w-[150px]">Nomor Invoice</th>
+                                <th class="py-2 px-2 text-left text-sm font-semibold text-gray-600 min-w-[150px]">Nama Perusahaan</th>
                                 <th class="py-2 px-2 text-left text-sm font-semibold text-gray-600 min-w-[220px]">Jenis Pajak</th>
                                 <th class="py-2 px-2 text-left text-sm font-semibold text-gray-600 min-w-[120px]">Tarif PPh (%)</th>
                                 <th class="py-2 px-2 text-left text-sm font-semibold text-gray-600 min-w-[160px]">DPP</th>
@@ -98,7 +99,7 @@
             <div id="result-container-unifikasi" class="mt-8 bg-white p-6 rounded-xl shadow-lg hidden">
                 <h2 class="text-2xl font-bold mb-4">Hasil Perhitungan PPh Unifikasi</h2>
                 <div class="table-responsive">
-                    <table class="min-w-full divide-y divide-gray-200" id="result-table-unifikasi"><thead class="bg-gray-50"><tr><th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">No. Invoice</th><th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Deskripsi</th><th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">DPP</th><th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">PPN</th><th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">PPh</th><th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">Jumlah</th></tr></thead><tbody id="result-table-body-unifikasi" class="divide-y divide-gray-200"></tbody><tfoot id="result-table-foot-unifikasi" class="bg-gray-100 font-bold"></tfoot></table>
+                    <table class="min-w-full divide-y divide-gray-200" id="result-table-unifikasi"><thead class="bg-gray-50"><tr><th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">No. Invoice</th><th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Nama Perusahaan</th><th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Deskripsi</th><th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">DPP</th><th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">PPN</th><th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">PPh</th><th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">Jumlah</th></tr></thead><tbody id="result-table-body-unifikasi" class="divide-y divide-gray-200"></tbody><tfoot id="result-table-foot-unifikasi" class="bg-gray-100 font-bold"></tfoot></table>
                 </div>
                 <div id="export-buttons-unifikasi" class="mt-6 flex flex-col sm:flex-row justify-end gap-3"><button id="export-excel-btn-unifikasi" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-lg flex items-center justify-center gap-2">Ekspor ke Excel</button><button id="export-pdf-btn-unifikasi" class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-lg flex items-center justify-center gap-2">Ekspor ke PDF</button></div>
             </div>
@@ -407,7 +408,7 @@
             let finalBruto, pph21, terRate, category, tunjanganPph = 0;
 
             if (isGrossUp) {
-                const grossUpResult = calculateGrossUp(baseBruto, ptkpStatus);
+                const grossUpResult = calculateGrossUp(baseIncome, ptkpStatus);
                 tunjanganPph = grossUpResult.tunjanganPph;
                 pph21 = grossUpResult.pphFinal;
                 finalBruto = Math.round(baseBruto + tunjanganPph);
@@ -660,83 +661,146 @@
         }
 
         function setupUnifikasi() {
-             const unifikasiContent = document.getElementById('unifikasi-content');
-             let unifikasiTransactionCounter = 0;
-             let lastUnifikasiResults = [];
-             const rowsContainer = unifikasiContent.querySelector('#transaction-rows-container-unifikasi');
-             const taxTypes = {'none': { desc: 'Tidak Ada PPh', rate: 0 },'pph22_tambang': { desc: 'PPh 22 Penjualan Hasil Tambang', rate: 1.5 },'pph22_prepaid_solar': { desc: 'PPh 22 Prepaid (Solar)', rate: 0.25, calculation: 'additive' },'pph22_pembelian_instansi': { desc: 'PPh 22 Pembelian oleh Instansi', rate: 1.5 },'pph23_jasa': { desc: 'PPh 23 Jasa', rate: 2 },'pph23_dividen': { desc: 'PPh 23 Dividen/Bunga/Royalti', rate: 15 },'pph23_sewa': { desc: 'PPh 23 Sewa Aset (non tanah/bangunan)', rate: 2 },'pph42_sewa': { desc: 'PPh 4(2) Sewa Tanah/Bangunan', rate: 10 },'pph42_konstruksi_kecil': { desc: 'PPh 4(2) Jasa Konstruksi (Kecil)', rate: 1.75 },'pph42_konstruksi_menengah': { desc: 'PPh 4(2) Jasa Konstruksi (Menengah/Besar)', rate: 2.65 },'pph42_konsultan': { desc: 'PPh 4(2) Konsultan Konstruksi', rate: 3.5 },'pph42_dividen_op': { desc: 'PPh 4(2) Dividen Orang Pribadi', rate: 10 },'pph_final_umkm': { desc: 'PPh Final UMKM (PP 55/2022)', rate: 0.5 },'pph26': { desc: 'PPh 26 (Subjek Pajak Luar Negeri)', rate: 20 },};
-             const taxOptionsHtml = Object.entries(taxTypes).map(([key, value]) => `<option value="${key}">${value.desc}</option>`).join('');
+            const unifikasiContent = document.getElementById('unifikasi-content');
+            let unifikasiTransactionCounter = 0;
+            let lastUnifikasiResults = [];
+            const rowsContainer = unifikasiContent.querySelector('#transaction-rows-container-unifikasi');
+            
+            const taxTypesUnifikasi = {
+                '28-403-01': { category: 'PPh Pasal 4 ayat (2)', desc: 'Bunga Deposito/Tabungan/Diskonto SBI - Pihak dalam negeri dan BUT', rate: 20 },
+                '28-403-02': { category: 'PPh Pasal 4 ayat (2)', desc: 'Bunga Deposito/Tabungan/Diskonto SBI - Pihak luar negeri', rate: 20 },
+                '28-404-01': { category: 'PPh Pasal 4 ayat (2)', desc: 'Bunga Obligasi (termasuk SUN) < 5 tahun', rate: 5 },
+                '28-404-02': { category: 'PPh Pasal 4 ayat (2)', desc: 'Bunga Obligasi (termasuk SUN) > 5 tahun', rate: 10 },
+                '28-405-01': { category: 'PPh Pasal 4 ayat (2)', desc: 'Persewaan Tanah dan/atau Bangunan', rate: 10 },
+                '28-409-01': { category: 'PPh Pasal 4 ayat (2)', desc: 'Jasa Konstruksi - Pelaksana (Kecil)', rate: 1.75 },
+                '28-409-02': { category: 'PPh Pasal 4 ayat (2)', desc: 'Jasa Konstruksi - Pelaksana (Menengah/Besar)', rate: 2.65 },
+                '28-409-05': { category: 'PPh Pasal 4 ayat (2)', desc: 'Jasa Konstruksi - Konsultan', rate: 3.5 },
+                '28-419-01': { category: 'PPh Pasal 4 ayat (2)', desc: 'Dividen yang diterima Orang Pribadi', rate: 10 },
+                '28-499-01': { category: 'PPh Pasal 4 ayat (2)', desc: 'Transaksi Derivatif (Bursa)', rate: 2.5 },
+                '27-102-01': { category: 'PPh Pasal 15', desc: 'Pelayaran Dalam Negeri', rate: 1.2 },
+                '27-102-02': { category: 'PPh Pasal 15', desc: 'Penerbangan Dalam Negeri', rate: 1.8 },
+                '27-102-03': { category: 'PPh Pasal 15', desc: 'Pelayaran/Penerbangan Luar Negeri', rate: 2.64 },
+                '22-101-01': { category: 'PPh Pasal 22', desc: 'Impor dengan API', rate: 2.5 },
+                '22-101-02': { category: 'PPh Pasal 22', desc: 'Impor tanpa API', rate: 7.5 },
+                '22-401-01': { category: 'PPh Pasal 22', desc: 'Pembelian oleh Bendaharawan/BUMN/BUMD', rate: 1.5 },
+                '22-403-01': { category: 'PPh Pasal 22', desc: 'Penjualan Hasil Produksi Semen', rate: 0.25 },
+                '22-403-02': { category: 'PPh Pasal 22', desc: 'Penjualan Hasil Produksi Kertas', rate: 0.1 },
+                '22-403-03': { category: 'PPh Pasal 22', desc: 'Penjualan Hasil Produksi Baja', rate: 0.3 },
+                '22-403-04': { category: 'PPh Pasal 22', desc: 'Penjualan Hasil Produksi Otomotif', rate: 0.45 },
+                '24-100-01': { category: 'PPh Pasal 23', desc: 'Dividen (selain yang diterima OP atau dikecualikan)', rate: 15 },
+                '24-101-01': { category: 'PPh Pasal 23', desc: 'Bunga (termasuk premium, diskonto, imbalan jaminan)', rate: 15 },
+                '24-102-01': { category: 'PPh Pasal 23', desc: 'Royalti', rate: 15 },
+                '24-103-01': { category: 'PPh Pasal 23', desc: 'Hadiah, Penghargaan, Bonus (selain yang dipotong PPh 21)', rate: 15 },
+                '24-104-01': { category: 'PPh Pasal 23', desc: 'Sewa dan Penghasilan Lain Sehubungan Penggunaan Harta (selain tanah/bangunan)', rate: 2 },
+                '24-104-02': { category: 'PPh Pasal 23', desc: 'Jasa Teknik', rate: 2 },
+                '24-104-03': { category: 'PPh Pasal 23', desc: 'Jasa Manajemen', rate: 2 },
+                '24-104-04': { category: 'PPh Pasal 23', desc: 'Jasa Konsultan (selain konsultan konstruksi)', rate: 2 },
+                '24-104-25': { category: 'PPh Pasal 23', desc: 'Jasa Penilai (Appraisal)', rate: 2 },
+                '24-104-26': { category: 'PPh Pasal 23', desc: 'Jasa Aktuaris', rate: 2 },
+                '29-100-01': { category: 'PPh Pasal 26', desc: 'Dividen', rate: 20 },
+                '29-101-01': { category: 'PPh Pasal 26', desc: 'Bunga', rate: 20 },
+                '29-102-01': { category: 'PPh Pasal 26', desc: 'Royalti, Sewa, dan Penghasilan Lain', rate: 20 },
+                '29-104-01': { category: 'PPh Pasal 26', desc: 'Imbalan Jasa, Pekerjaan, dan Kegiatan', rate: 20 },
+            };
 
-             function addUnifikasiRow() {
-                 const id = unifikasiTransactionCounter++;
-                 const newRow = document.createElement('tr'); newRow.className = 'transaction-row-unifikasi'; newRow.id = `row-unifikasi-${id}`;
-                 newRow.innerHTML = `<td class="text-center text-sm text-gray-500">${id + 1}</td><td><input type="text" class="form-input invoice-no" placeholder="Opsional"></td><td><select class="form-select pph-type">${taxOptionsHtml}</select></td><td><input type="number" class="form-input pph-rate" step="0.01" placeholder="0"></td><td><input type="number" class="form-input dpp" placeholder="100000"></td><td><div class="flex items-center gap-2"><select class="form-select ppn-option"><option value="none">Tanpa PPN</option><option value="11">PPN 11%</option><option value="1.1">PPN 1.1%</option><option value="custom">PPN Custom</option></select><input type="number" class="form-input ppn-custom-rate hidden" placeholder="Tarif %"></div></td><td class="text-center"><button class="delete-btn" title="Hapus Baris"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg></button></td>`;
-                 rowsContainer.appendChild(newRow);
-                 newRow.querySelector('.pph-type').addEventListener('change', () => updateUnifikasiPphRate(newRow));
-                 newRow.querySelector('.ppn-option').addEventListener('change', () => handleUnifikasiPpnOptionChange(newRow));
-                 newRow.querySelector('.delete-btn').addEventListener('click', () => deleteUnifikasiRow(newRow));
-                 updateUnifikasiPphRate(newRow);
-             }
-             function updateUnifikasiPphRate(row) { row.querySelector('.pph-rate').value = taxTypes[row.querySelector('.pph-type').value].rate; }
-             function handleUnifikasiPpnOptionChange(row) { row.querySelector('.ppn-custom-rate').classList.toggle('hidden', row.querySelector('.ppn-option').value !== 'custom'); }
-             function deleteUnifikasiRow(row) { row.remove(); document.querySelectorAll('.transaction-row-unifikasi').forEach((r, i) => { r.cells[0].textContent = i + 1; }); }
-             
-             unifikasiContent.querySelector('#add-row-btn-unifikasi').addEventListener('click', addUnifikasiRow);
-             unifikasiContent.querySelector('#calculateBtn-unifikasi').addEventListener('click', calculateAllUnifikasi);
-             unifikasiContent.querySelector('#export-excel-btn-unifikasi').addEventListener('click', exportUnifikasiToExcel);
-             unifikasiContent.querySelector('#export-pdf-btn-unifikasi').addEventListener('click', exportUnifikasiToPDF);
+            const groupedTaxes = {};
+            for (const code in taxTypesUnifikasi) {
+                const tax = taxTypesUnifikasi[code];
+                if (!groupedTaxes[tax.category]) {
+                    groupedTaxes[tax.category] = [];
+                }
+                groupedTaxes[tax.category].push({ code, ...tax });
+            }
 
-             function calculateAllUnifikasi() {
-                 clearError('error-container-unifikasi');
-                 const rows = document.querySelectorAll('.transaction-row-unifikasi');
-                 if (rows.length === 0) { showError('error-container-unifikasi', "Silakan tambah baris transaksi terlebih dahulu."); return; }
-                 let allResults = []; let hasError = false;
-                 rows.forEach((row, index) => {
-                     if (hasError) return;
-                     try {
-                         const invoiceNo = row.querySelector('.invoice-no').value.trim();
-                         const dpp = parseFloat(row.querySelector('.dpp').value);
-                         if (isNaN(dpp) || dpp <= 0) throw new Error(`DPP pada baris #${index + 1} tidak valid.`);
-                         const pphTypeSelect = row.querySelector('.pph-type');
-                         const selectedTaxKey = pphTypeSelect.value;
-                         const taxInfo = taxTypes[selectedTaxKey];
-                         const pphRate = parseFloat(row.querySelector('.pph-rate').value) / 100;
-                         if (isNaN(pphRate) || pphRate < 0) throw new Error(`Tarif PPh pada baris #${index + 1} tidak valid.`);
-                         const pph = dpp * pphRate;
-                         const pphDesc = pphTypeSelect.options[pphTypeSelect.selectedIndex].text;
-                         const ppnSelect = row.querySelector('.ppn-option');
-                         let ppn = 0; let ppnDesc = '';
-                         if (ppnSelect.value !== 'none') {
-                             let ppnRate = 0;
-                             if (ppnSelect.value === 'custom') {
-                                 const customPpnRate = parseFloat(row.querySelector('.ppn-custom-rate').value);
-                                 if (isNaN(customPpnRate) || customPpnRate < 0) throw new Error(`Tarif PPN Custom pada baris #${index + 1} tidak valid.`);
-                                 ppnRate = customPpnRate / 100;
-                                 ppnDesc = `PPN ${customPpnRate}%`;
-                             } else {
-                                 ppnRate = parseFloat(ppnSelect.value) / 100;
-                                 ppnDesc = `PPN ${ppnSelect.value}%`;
-                             }
-                             ppn = dpp * ppnRate;
-                         }
-                         const roundedPph = Math.round(pph);
-                         const roundedPpn = Math.round(ppn);
-                         const calculationType = taxInfo.calculation === 'additive' ? 'additive' : 'subtractive';
-                         const finalPayment = calculationType === 'additive' ? (dpp + roundedPpn + roundedPph) : (dpp + roundedPpn - roundedPph);
-                         let fullDesc = selectedTaxKey !== 'none' ? pphDesc : '';
-                         if (ppnSelect.value !== 'none') { fullDesc = fullDesc ? `${fullDesc} + ${ppnDesc}` : ppnDesc; }
-                         if (!fullDesc) fullDesc = 'Transaksi Tanpa Pajak';
-                         allResults.push({ invoiceNo, description: fullDesc, dpp, ppn: roundedPpn, pph: roundedPph, actualPayment: finalPayment, calculation: calculationType });
-                     } catch (e) {
-                         showError('error-container-unifikasi', e.message);
-                         hasError = true;
-                     }
-                 });
-                 if (!hasError) {
-                     lastUnifikasiResults = allResults;
-                     displayUnifikasiResults(allResults);
-                 }
-             }
+            let taxOptionsHtml = '<option value="">-- Pilih Jenis Pajak --</option>';
+            for (const category in groupedTaxes) {
+                taxOptionsHtml += `<optgroup label="${category}">`;
+                groupedTaxes[category].forEach(tax => {
+                    taxOptionsHtml += `<option value="${tax.code}">${tax.code} - ${tax.desc}</option>`;
+                });
+                taxOptionsHtml += `</optgroup>`;
+            }
+
+            function addUnifikasiRow() {
+                const id = unifikasiTransactionCounter++;
+                const newRow = document.createElement('tr');
+                newRow.className = 'transaction-row-unifikasi';
+                newRow.id = `row-unifikasi-${id}`;
+                newRow.innerHTML = `<td class="text-center text-sm text-gray-500">${id + 1}</td><td><input type="text" class="form-input invoice-no" placeholder="Opsional"></td><td><input type="text" class="form-input company-name" placeholder="Nama Perusahaan"></td><td><select class="form-select pph-type">${taxOptionsHtml}</select></td><td><input type="number" class="form-input pph-rate" step="0.01" placeholder="0"></td><td><input type="number" class="form-input dpp" placeholder="100000"></td><td><div class="flex items-center gap-2"><select class="form-select ppn-option"><option value="none">Tanpa PPN</option><option value="11">PPN 11%</option><option value="1.1">PPN 1.1%</option><option value="custom">PPN Custom</option></select><input type="number" class="form-input ppn-custom-rate hidden" placeholder="Tarif %"></div></td><td class="text-center"><button class="delete-btn" title="Hapus Baris"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg></button></td>`;
+                rowsContainer.appendChild(newRow);
+                newRow.querySelector('.pph-type').addEventListener('change', () => updateUnifikasiPphRate(newRow));
+                newRow.querySelector('.ppn-option').addEventListener('change', () => handleUnifikasiPpnOptionChange(newRow));
+                newRow.querySelector('.delete-btn').addEventListener('click', () => deleteUnifikasiRow(newRow));
+                updateUnifikasiPphRate(newRow);
+            }
+
+            function updateUnifikasiPphRate(row) {
+                const selectedCode = row.querySelector('.pph-type').value;
+                const taxInfo = taxTypesUnifikasi[selectedCode];
+                row.querySelector('.pph-rate').value = taxInfo ? taxInfo.rate : 0;
+            }
+
+            function handleUnifikasiPpnOptionChange(row) { row.querySelector('.ppn-custom-rate').classList.toggle('hidden', row.querySelector('.ppn-option').value !== 'custom'); }
+            function deleteUnifikasiRow(row) { row.remove(); document.querySelectorAll('.transaction-row-unifikasi').forEach((r, i) => { r.cells[0].textContent = i + 1; }); }
+            
+            unifikasiContent.querySelector('#add-row-btn-unifikasi').addEventListener('click', addUnifikasiRow);
+            unifikasiContent.querySelector('#calculateBtn-unifikasi').addEventListener('click', calculateAllUnifikasi);
+            unifikasiContent.querySelector('#export-excel-btn-unifikasi').addEventListener('click', exportUnifikasiToExcel);
+            unifikasiContent.querySelector('#export-pdf-btn-unifikasi').addEventListener('click', exportUnifikasiToPDF);
+
+            function calculateAllUnifikasi() {
+                clearError('error-container-unifikasi');
+                const rows = document.querySelectorAll('.transaction-row-unifikasi');
+                if (rows.length === 0) { showError('error-container-unifikasi', "Silakan tambah baris transaksi terlebih dahulu."); return; }
+                let allResults = []; let hasError = false;
+                rows.forEach((row, index) => {
+                    if (hasError) return;
+                    try {
+                        const invoiceNo = row.querySelector('.invoice-no').value.trim();
+                        const companyName = row.querySelector('.company-name').value.trim();
+                        const dpp = parseFloat(row.querySelector('.dpp').value);
+                        if (isNaN(dpp) || dpp <= 0) throw new Error(`DPP pada baris #${index + 1} tidak valid.`);
+                        const pphTypeSelect = row.querySelector('.pph-type');
+                        const selectedTaxKey = pphTypeSelect.value;
+                        if (!selectedTaxKey) throw new Error(`Jenis Pajak pada baris #${index + 1} belum dipilih.`);
+                        
+                        const pphRate = parseFloat(row.querySelector('.pph-rate').value) / 100;
+                        if (isNaN(pphRate) || pphRate < 0) throw new Error(`Tarif PPh pada baris #${index + 1} tidak valid.`);
+                        const pph = dpp * pphRate;
+                        const pphDesc = pphTypeSelect.options[pphTypeSelect.selectedIndex].text;
+                        
+                        const ppnSelect = row.querySelector('.ppn-option');
+                        let ppn = 0; let ppnDesc = '';
+                        if (ppnSelect.value !== 'none') {
+                            let ppnRate = 0;
+                            if (ppnSelect.value === 'custom') {
+                                const customPpnRate = parseFloat(row.querySelector('.ppn-custom-rate').value);
+                                if (isNaN(customPpnRate) || customPpnRate < 0) throw new Error(`Tarif PPN Custom pada baris #${index + 1} tidak valid.`);
+                                ppnRate = customPpnRate / 100;
+                                ppnDesc = `PPN ${customPpnRate}%`;
+                            } else {
+                                ppnRate = parseFloat(ppnSelect.value) / 100;
+                                ppnDesc = `PPN ${ppnSelect.value}%`;
+                            }
+                            ppn = dpp * ppnRate;
+                        }
+                        const roundedPph = Math.round(pph);
+                        const roundedPpn = Math.round(ppn);
+                        const finalPayment = (dpp + roundedPpn - roundedPph);
+                        let fullDesc = pphDesc;
+                        if (ppnSelect.value !== 'none') { fullDesc = fullDesc ? `${fullDesc} + ${ppnDesc}` : ppnDesc; }
+                        
+                        allResults.push({ invoiceNo, companyName, description: fullDesc, dpp, ppn: roundedPpn, pph: roundedPph, actualPayment: finalPayment });
+                    } catch (e) {
+                        showError('error-container-unifikasi', e.message);
+                        hasError = true;
+                    }
+                });
+                if (!hasError) {
+                    lastUnifikasiResults = allResults;
+                    displayUnifikasiResults(allResults);
+                }
+            }
 
              function displayUnifikasiResults(results) {
                  const resultContainer = document.getElementById('result-container-unifikasi');
@@ -746,10 +810,10 @@
                  let totalDpp = 0, totalPpn = 0, totalPph = 0, totalActual = 0;
                  results.forEach(res => {
                      totalDpp += res.dpp; totalPpn += res.ppn; totalPph += res.pph; totalActual += res.actualPayment;
-                     resultBody.innerHTML += `<tr><td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${res.invoiceNo || '-'}</td><td class="px-6 py-4 whitespace-nowrap text-sm font-medium">${res.description}</td><td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-right">${formatNumber(res.dpp)}</td><td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-right">${formatNumber(res.ppn)}</td><td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-right">${formatNumber(res.pph)}</td><td class="px-6 py-4 whitespace-nowrap text-sm font-semibold text-right">${formatNumber(res.actualPayment)}</td></tr>`;
+                     resultBody.innerHTML += `<tr><td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${res.invoiceNo || '-'}</td><td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${res.companyName || '-'}</td><td class="px-6 py-4 whitespace-nowrap text-sm font-medium">${res.description}</td><td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-right">${formatNumber(res.dpp)}</td><td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-right">${formatNumber(res.ppn)}</td><td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-right">${formatNumber(res.pph)}</td><td class="px-6 py-4 whitespace-nowrap text-sm font-semibold text-right">${formatNumber(res.actualPayment)}</td></tr>`;
                  });
                  if (results.length > 1) {
-                     resultFoot.innerHTML = `<tr><td class="px-6 py-4 text-left text-sm font-bold" colspan="2">JUMLAH</td><td class="px-6 py-4 text-right text-sm font-bold">${formatNumber(totalDpp)}</td><td class="px-6 py-4 text-right text-sm font-bold">${formatNumber(totalPpn)}</td><td class="px-6 py-4 text-right text-sm font-bold">${formatNumber(totalPph)}</td><td class="px-6 py-4 text-right text-sm font-bold">${formatNumber(totalActual)}</td></tr>`;
+                     resultFoot.innerHTML = `<tr><td class="px-6 py-4 text-left text-sm font-bold" colspan="3">JUMLAH</td><td class="px-6 py-4 text-right text-sm font-bold">${formatNumber(totalDpp)}</td><td class="px-6 py-4 text-right text-sm font-bold">${formatNumber(totalPpn)}</td><td class="px-6 py-4 text-right text-sm font-bold">${formatNumber(totalPph)}</td><td class="px-6 py-4 text-right text-sm font-bold">${formatNumber(totalActual)}</td></tr>`;
                  }
                  resultContainer.classList.remove('hidden');
              }
@@ -761,6 +825,7 @@
                 }
                 const exportData = lastUnifikasiResults.map(res => ({
                     'No. Invoice': res.invoiceNo || '-',
+                    'Nama Perusahaan': res.companyName || '-',
                     'Deskripsi': res.description,
                     'DPP': res.dpp,
                     'PPN': res.ppn,
@@ -769,7 +834,7 @@
                 }));
 
                 const ws = XLSX.utils.json_to_sheet(exportData);
-                ws['!cols'] = [{ wch: 15 }, { wch: 40 }, { wch: 15 }, { wch: 15 }, { wch: 15 }, { wch: 25 }];
+                ws['!cols'] = [{ wch: 15 }, { wch: 25 }, { wch: 40 }, { wch: 15 }, { wch: 15 }, { wch: 15 }, { wch: 25 }];
                 const wb = XLSX.utils.book_new();
                 XLSX.utils.book_append_sheet(wb, ws, "Hasil PPh Unifikasi");
                 XLSX.writeFile(wb, "Hasil_Perhitungan_PPh_Unifikasi.xlsx");
@@ -785,12 +850,13 @@
 
                 doc.text("Hasil Perhitungan PPh Unifikasi", 14, 15);
 
-                const tableColumn = ["No. Invoice", "Deskripsi", "DPP", "PPN", "PPh", "Jumlah"];
+                const tableColumn = ["No. Invoice", "Nama Perusahaan", "Deskripsi", "DPP", "PPN", "PPh", "Jumlah"];
                 const tableRows = [];
 
                 lastUnifikasiResults.forEach(res => {
                     const rowData = [
                         res.invoiceNo || '-',
+                        res.companyName || '-',
                         res.description,
                         formatNumber(res.dpp),
                         formatNumber(res.ppn),
@@ -809,7 +875,8 @@
                     styles: { halign: 'right' },
                     columnStyles: {
                         0: { halign: 'left' },
-                        1: { halign: 'left' }
+                        1: { halign: 'left' },
+                        2: { halign: 'left' }
                     }
                 });
 
