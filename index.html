@@ -358,19 +358,30 @@
 
         function calculateGrossUp(baseIncome, ptkpStatus) {
             let tunjanganPph = 0;
-            let pphFinal = 0;
-            for (let i = 0; i < 10; i++) { // Max 10 iterations to prevent infinite loops
-                const bruto = Math.round(baseIncome + tunjanganPph);
-                const { pph21 } = calculateTer(bruto, ptkpStatus);
-                const newTunjangan = pph21;
-                if (Math.abs(newTunjangan - tunjanganPph) < 1) { // Converged
-                    pphFinal = pph21;
+            let pph21, terRate, category, bruto;
+
+            for (let i = 0; i < 10; i++) { // Max 10 iterations
+                bruto = Math.round(baseIncome + tunjanganPph);
+                const terResult = calculateTer(bruto, ptkpStatus);
+                
+                if (Math.abs(terResult.pph21 - tunjanganPph) < 1) { // Converged
+                    tunjanganPph = terResult.pph21;
                     break;
                 }
-                tunjanganPph = newTunjangan;
-                pphFinal = pph21;
+                tunjanganPph = terResult.pph21;
             }
-            return { tunjanganPph: Math.round(tunjanganPph), pphFinal: Math.round(pphFinal) };
+            
+            // Final calculation with the converged allowance
+            const finalBruto = Math.round(baseIncome + tunjanganPph);
+            const finalResult = calculateTer(finalBruto, ptkpStatus);
+
+            return { 
+                tunjanganPph: Math.round(tunjanganPph), 
+                pphFinal: finalResult.pph21,
+                terRate: finalResult.terRate,
+                category: finalResult.category,
+                finalBruto: finalResult.bruto
+            };
         }
         
         function updateBrutoBulanan() {
@@ -405,16 +416,16 @@
             const resultDiv = document.getElementById('result-pph21-bulanan');
             const isGrossUp = document.querySelector('input[name="tax-method"]:checked').value === 'gross-up';
 
-            let finalBruto, pph21, terRate, category, tunjanganPph = 0;
+            let finalBruto, pph21, terRate, category, tunjanganPph;
 
             if (isGrossUp) {
-                const grossUpResult = calculateGrossUp(baseIncome, ptkpStatus);
+                const grossUpResult = calculateGrossUp(baseBruto, ptkpStatus);
                 tunjanganPph = grossUpResult.tunjanganPph;
                 pph21 = grossUpResult.pphFinal;
-                finalBruto = Math.round(baseBruto + tunjanganPph);
-                const terResult = calculateTer(finalBruto, ptkpStatus);
-                terRate = terResult.terRate;
-                category = terResult.category;
+                finalBruto = grossUpResult.finalBruto;
+                terRate = grossUpResult.terRate;
+                category = grossUpResult.category;
+                
                 document.getElementById('tunjangan-pph').value = tunjanganPph;
                 document.getElementById('penghasilan-bruto-bulanan').value = finalBruto;
             } else {
