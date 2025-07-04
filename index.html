@@ -52,6 +52,14 @@
             background-color: #4f46e5;
             color: white;
         }
+        /* XML Generator Styles */
+        .xml-section-header {
+            font-size: 1.125rem;
+            font-weight: 600;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid #e5e7eb;
+            margin-bottom: 1rem;
+        }
     </style>
 </head>
 <body class="bg-gray-100 text-gray-800">
@@ -67,6 +75,7 @@
                 <button class="tab-btn active" data-tab="unifikasi">Kalkulator PPh Unifikasi</button>
                 <button class="tab-btn" data-tab="pph21">Kalkulator PPh 21</button>
                 <button class="tab-btn" data-tab="ter">Daftar TER</button>
+                <button class="tab-btn" data-tab="xml-generator">XML Generator</button>
                 <button class="tab-btn" data-tab="donasi">Beliin Kopi</button>
             </nav>
         </div>
@@ -85,6 +94,7 @@
                                 <th class="py-2 px-2 text-left text-sm font-semibold text-gray-600 min-w-[220px]">Jenis Pajak</th>
                                 <th class="py-2 px-2 text-left text-sm font-semibold text-gray-600 min-w-[120px]">Tarif PPh (%)</th>
                                 <th class="py-2 px-2 text-left text-sm font-semibold text-gray-600 min-w-[160px]">DPP</th>
+                                <th class="py-2 px-2 text-left text-sm font-semibold text-gray-600 min-w-[120px]">Metode</th>
                                 <th class="py-2 px-2 text-left text-sm font-semibold text-gray-600 min-w-[210px]">Opsi PPN</th>
                                 <th class="py-2 px-2 text-center text-sm font-semibold text-gray-600">Aksi</th>
                             </tr>
@@ -99,7 +109,22 @@
             <div id="result-container-unifikasi" class="mt-8 bg-white p-6 rounded-xl shadow-lg hidden">
                 <h2 class="text-2xl font-bold mb-4">Hasil Perhitungan PPh Unifikasi</h2>
                 <div class="table-responsive">
-                    <table class="min-w-full divide-y divide-gray-200" id="result-table-unifikasi"><thead class="bg-gray-50"><tr><th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">No. Invoice</th><th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Nama Perusahaan</th><th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Deskripsi</th><th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">DPP</th><th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">PPN</th><th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">PPh</th><th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">Jumlah</th></tr></thead><tbody id="result-table-body-unifikasi" class="divide-y divide-gray-200"></tbody><tfoot id="result-table-foot-unifikasi" class="bg-gray-100 font-bold"></tfoot></table>
+                    <table class="min-w-full divide-y divide-gray-200" id="result-table-unifikasi">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">No. Invoice</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Nama Perusahaan</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Deskripsi</th>
+                                <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">DPP (Input)</th>
+                                <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">DPP (Gross-up)</th>
+                                <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">PPN</th>
+                                <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">PPh</th>
+                                <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">Jumlah</th>
+                            </tr>
+                        </thead>
+                        <tbody id="result-table-body-unifikasi" class="divide-y divide-gray-200"></tbody>
+                        <tfoot id="result-table-foot-unifikasi" class="bg-gray-100 font-bold"></tfoot>
+                    </table>
                 </div>
                 <div id="export-buttons-unifikasi" class="mt-6 flex flex-col sm:flex-row justify-end gap-3"><button id="export-excel-btn-unifikasi" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-lg flex items-center justify-center gap-2">Ekspor ke Excel</button><button id="export-pdf-btn-unifikasi" class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-lg flex items-center justify-center gap-2">Ekspor ke PDF</button></div>
             </div>
@@ -210,10 +235,36 @@
                             <div class="flex gap-4"><button id="resetBtn-pph21-tahunan" class="w-1/2 bg-gray-200 hover:bg-gray-300 font-bold py-2 px-4 rounded-lg">Reset</button><button id="calculateBtn-pph21-tahunan" class="w-1/2 btn-primary text-white font-bold py-2 px-4 rounded-lg">Hitung</button></div>
                         </div>
                         
-                        <!-- Right Column: Results -->
-                        <div id="result-pph21-akhirtahun" class="p-4 bg-white border rounded-lg sticky top-6">
-                            <h4 class="text-lg font-semibold border-b pb-2 mb-4">E. Hasil Perhitungan</h4>
-                            <div class="text-center text-gray-500">Hasil perhitungan akan muncul di sini.</div>
+                        <!-- Right Column: Results & Bulk Calc -->
+                        <div class="space-y-6">
+                            <div id="result-pph21-akhirtahun" class="p-4 bg-white border rounded-lg sticky top-6">
+                                <h4 class="text-lg font-semibold border-b pb-2 mb-4">E. Hasil Perhitungan</h4>
+                                <div class="text-center text-gray-500">Hasil perhitungan akan muncul di sini.</div>
+                            </div>
+                             <div class="p-4 bg-white border rounded-lg">
+                                <h4 class="text-lg font-semibold mb-3">Kalkulasi Massal (Masa Terakhir)</h4>
+                                <div class="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-lg text-sm text-blue-800">
+                                    <h5 class="font-bold mb-2">Cara Menggunakan Fitur Impor:</h5>
+                                    <ol class="list-decimal list-inside space-y-1">
+                                        <li><strong>Unduh Template:</strong> Dapatkan file Excel untuk diisi.</li>
+                                        <li><strong>Isi Data:</strong> Masukkan data tahunan setiap karyawan.</li>
+                                        <li><strong>Impor File:</strong> Pilih file yang sudah diisi untuk dihitung.</li>
+                                        <li><strong>Ekspor Hasil:</strong> Simpan hasil perhitungan PPh masa terakhir ke file Excel baru.</li>
+                                    </ol>
+                                </div>
+                                <div class="flex flex-col sm:flex-row justify-center gap-4">
+                                    <button id="template-excel-btn-pph21-tahunan" class="text-sm bg-gray-600 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded-lg flex-1">Unduh Template</button>
+                                    <label for="import-excel-pph21-tahunan" class="text-sm bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg cursor-pointer flex-1 text-center">Impor dari Excel</label>
+                                    <input type="file" id="import-excel-pph21-tahunan" class="hidden" accept=".xlsx, .xls">
+                                </div>
+                            </div>
+                            <div id="import-result-pph21-tahunan" class="hidden">
+                                <h4 class="text-lg font-semibold mb-2">Hasil Impor Data (Masa Terakhir)</h4>
+                                <div class="table-responsive max-h-80 border rounded-lg">
+                                    <table class="min-w-full text-sm whitespace-nowrap"></table>
+                                </div>
+                                <button id="export-excel-btn-pph21-tahunan" class="mt-4 w-full bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-lg">Ekspor Hasil ke Excel</button>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -254,6 +305,104 @@
             </div>
         </div>
 
+        <!-- Tab Content: XML Generator -->
+        <div id="xml-generator-content" class="tab-content">
+            <div class="bg-white p-6 rounded-xl shadow-lg">
+                <h3 class="text-xl font-bold mb-4 text-gray-800">PPN Digunggung 1.A5 XML Generator</h3>
+                 <div class="mb-6 p-3 bg-blue-50 border border-blue-200 rounded-lg text-sm text-blue-800">
+                    <h5 class="font-bold mb-2">Petunjuk Pengisian:</h5>
+                    <ol class="list-decimal list-inside space-y-1">
+                        <li><strong>Header:</strong> Isi data NPWP dan periode pajak yang akan dilaporkan.</li>
+                        <li><strong>Retail Invoice:</strong> Masukkan detail dari satu transaksi faktur pajak yang digunggung.</li>
+                        <li><strong>Validasi:</strong> Pastikan format NPWP (16 digit angka) dan tanggal sudah benar.</li>
+                        <li><strong>Download:</strong> Klik "Download XML" untuk menyimpan file yang siap diunggah.</li>
+                    </ol>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4">
+                    <!-- Header Section -->
+                    <div class="space-y-4">
+                        <h4 class="xml-section-header">Header</h4>
+                        <div>
+                            <label for="xml-tin" class="block text-sm font-medium text-gray-700">TIN/NPWP 16</label>
+                            <input type="text" id="xml-tin" class="form-input mt-1" placeholder="16 Digit NPWP" maxlength="16">
+                        </div>
+                        <div>
+                            <label for="xml-tax-month" class="block text-sm font-medium text-gray-700">Tax Period Month (MM)</label>
+                            <input type="number" id="xml-tax-month" class="form-input mt-1" placeholder="MM" min="1" max="12">
+                        </div>
+                        <div>
+                            <label for="xml-tax-year" class="block text-sm font-medium text-gray-700">Tax Period Year (YYYY)</label>
+                            <input type="number" id="xml-tax-year" class="form-input mt-1" placeholder="YYYY" min="2000">
+                        </div>
+                    </div>
+                    <!-- Retail Invoice Section -->
+                    <div class="space-y-4">
+                        <h4 class="xml-section-header">Retail Invoice</h4>
+                        <div>
+                            <label for="xml-trx-code" class="block text-sm font-medium text-gray-700">TrxCode</label>
+                            <select id="xml-trx-code" class="form-select mt-1">
+                                <option>Normal</option>
+                                <option>Correction</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label for="xml-buyer-name" class="block text-sm font-medium text-gray-700">Buyer Name</label>
+                            <input type="text" id="xml-buyer-name" class="form-input mt-1" placeholder="Nama Pembeli">
+                        </div>
+                        <div>
+                            <label for="xml-buyer-id-opt" class="block text-sm font-medium text-gray-700">Buyer Id Opt</label>
+                            <select id="xml-buyer-id-opt" class="form-select mt-1">
+                                <option>NIK</option>
+                                <option>Passport</option>
+                                <option>Other</option>
+                            </select>
+                        </div>
+                         <div>
+                            <label for="xml-buyer-id" class="block text-sm font-medium text-gray-700">Buyer Id Number</label>
+                            <input type="text" id="xml-buyer-id" class="form-input mt-1" placeholder="Nomor Identitas Pembeli">
+                        </div>
+                        <div>
+                            <label for="xml-good-service-opt" class="block text-sm font-medium text-gray-700">Good Service Opt</label>
+                            <input type="text" id="xml-good-service-opt" class="form-input mt-1" placeholder="A">
+                        </div>
+                        <div>
+                            <label for="xml-serial-no" class="block text-sm font-medium text-gray-700">Serial No</label>
+                            <input type="text" id="xml-serial-no" class="form-input mt-1" placeholder="Nomor Seri">
+                        </div>
+                        <div>
+                            <label for="xml-trx-date" class="block text-sm font-medium text-gray-700">Transaction Date</label>
+                            <input type="date" id="xml-trx-date" class="form-input mt-1" value="">
+                        </div>
+                        <div>
+                            <label for="xml-tax-base" class="block text-sm font-medium text-gray-700">Tax Base Selling Price</label>
+                            <input type="number" id="xml-tax-base" class="form-input mt-1" placeholder="0">
+                        </div>
+                        <div>
+                            <label for="xml-other-tax-base" class="block text-sm font-medium text-gray-700">Other Tax Base</label>
+                            <input type="number" id="xml-other-tax-base" class="form-input mt-1" placeholder="0">
+                        </div>
+                        <div>
+                            <label for="xml-vat" class="block text-sm font-medium text-gray-700">VAT (PPN)</label>
+                            <input type="number" id="xml-vat" class="form-input mt-1" placeholder="0">
+                        </div>
+                        <div>
+                            <label for="xml-stlg" class="block text-sm font-medium text-gray-700">STLG (PPnBM)</label>
+                            <input type="number" id="xml-stlg" class="form-input mt-1" placeholder="0">
+                        </div>
+                        <div>
+                            <label for="xml-info" class="block text-sm font-medium text-gray-700">Info</label>
+                            <input type="text" id="xml-info" class="form-input mt-1" placeholder="Keterangan Tambahan">
+                        </div>
+                    </div>
+                </div>
+                 <div id="xml-error-container" class="mt-6 text-center"></div>
+                <div class="mt-8 flex justify-end gap-4">
+                    <button id="xml-reset-btn" class="bg-gray-200 hover:bg-gray-300 font-bold py-2 px-6 rounded-lg">Reset</button>
+                    <button id="xml-download-btn" class="btn-primary text-white font-bold py-2 px-6 rounded-lg">Download XML</button>
+                </div>
+            </div>
+        </div>
+
         <!-- Tab Content: Donasi -->
         <div id="donasi-content" class="tab-content">
              <div class="bg-white p-8 rounded-xl shadow-lg max-w-2xl mx-auto text-center">
@@ -284,6 +433,15 @@
             </div>
         </div>
     </div>
+    
+    <footer class="text-center py-8 px-4">
+        <div class="max-w-3xl mx-auto text-xs text-gray-500">
+            <p class="font-semibold">Disclaimer Privasi:</p>
+            <p>Aplikasi ini adalah alat bantu kalkulasi semata. Seluruh data yang Anda masukkan hanya diproses di perangkat Anda dan tidak disimpan atau dikirim ke server mana pun.</p>
+            <p class="mt-2">Dibuat oleh Jevi S. &copy; 2025</p>
+        </div>
+    </footer>
+
 
     <script>
     // --- MAIN SCRIPT ---
@@ -320,6 +478,7 @@
 
         // --- PPh 21 LOGIC ---
         let lastPph21ImportResults = [];
+        let lastPph21TahunanImportResults = [];
         function setupPph21() {
             const pph21Content = document.getElementById('pph21-content');
             const ptkpSelectBulanan = pph21Content.querySelector('#ptkp-status-bulanan');
@@ -346,7 +505,11 @@
             pph21Content.querySelectorAll('.p21-income-tahunan, .p21-pengurang-tahunan, #tanggungan-tahunan').forEach(input => input.addEventListener('input', updateTahunanTotals));
             pph21Content.querySelector('#calculateBtn-pph21-tahunan').addEventListener('click', calculatePph21AkhirTahun);
             pph21Content.querySelector('#resetBtn-pph21-tahunan').addEventListener('click', resetFormTahunan);
-            updateTahunanTotals(); // Initial call to set calculated fields
+            updateTahunanTotals();
+
+            // Tahunan - Massal
+            pph21Content.querySelector('#template-excel-btn-pph21-tahunan').addEventListener('click', downloadPph21TemplateTahunan);
+            pph21Content.querySelector('#import-excel-pph21-tahunan').addEventListener('change', handlePph21ImportTahunan);
         }
 
         function calculateTer(bruto, ptkpStatus) {
@@ -527,24 +690,13 @@
              XLSX.writeFile(wb, "Hasil_Impor_PPh_21_Bulanan.xlsx");
         }
         
-        function getPtkpTahunan() {
-            const statusKawin = document.getElementById('status-kawin-tahunan').value; // TK, K, KI
-            const tanggunganEl = document.getElementById('tanggungan-tahunan');
-            const tanggungan = parseInt(tanggunganEl.value) || 0;
-
-            if (tanggungan < 0 || tanggungan > 3) {
-                showError('error-container-pph21-tahunan', 'Jumlah tanggungan harus antara 0 dan 3.');
-                tanggunganEl.value = 0; // Reset to valid value
-                return null;
-            }
-
+        function getPtkpTahunan(statusKawin, tanggungan) {
             const ptkpMatrix = {
                 'TK': [54000000, 58500000, 63000000, 67500000],
                 'K':  [58500000, 63000000, 67500000, 72000000],
                 'KI': [112500000, 117000000, 121500000, 126000000]
             };
-
-            return ptkpMatrix[statusKawin][tanggungan];
+            return ptkpMatrix[statusKawin] ? ptkpMatrix[statusKawin][tanggungan] : null;
         }
 
         function updateTahunanTotals() {
@@ -596,8 +748,13 @@
             const pph21Dipotong = parseFloat(document.getElementById('pph21-dipotong-sebelumnya').value) || 0;
             const resultDiv = document.getElementById('result-pph21-akhirtahun');
             
-            const ptkpTahunan = getPtkpTahunan();
-            if (ptkpTahunan === null) return; // Error already shown by getPtkpTahunan
+            const statusKawin = document.getElementById('status-kawin-tahunan').value;
+            const tanggungan = parseInt(document.getElementById('tanggungan-tahunan').value) || 0;
+            const ptkpTahunan = getPtkpTahunan(statusKawin, tanggungan);
+            if (ptkpTahunan === null) {
+                showError('error-container-pph21-tahunan', 'Status kawin atau tanggungan tidak valid.');
+                return;
+            }
 
             const nettoSetahun = brutoSetahun - totalPengurang;
             const pkpSetahun = Math.max(0, Math.floor((nettoSetahun - ptkpTahunan) / 1000) * 1000);
@@ -676,7 +833,116 @@
                 </div>
             `;
         }
+        
+        // --- PPh 21 Tahunan Massal ---
+        function downloadPph21TemplateTahunan() {
+            const headers = [['NIK', 'Nama Pegawai', 'Status Pegawai (tetap/pensiunan)', 'Status Kawin (TK/K/KI)', 'Jml Tanggungan (0-3)', 'Gaji/Pensiun Setahun', 'Tunjangan PPh', 'Tunjangan Lainnya', 'Honorarium', 'Premi Asuransi', 'Natura', 'Bonus/THR', 'Iuran Pensiun/THT', 'Zakat/Sumbangan Wajib', 'PPh 21 Dipotong (Jan-Nov)']];
+            const ws = XLSX.utils.aoa_to_sheet(headers);
+            ws['!cols'] = Array(headers[0].length).fill(0).map((_, i) => ({ wch: [18, 25, 20, 20, 18, 20, 15, 15, 15, 15, 15, 15, 18, 22, 25][i] }));
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, "Template Impor Tahunan");
+            XLSX.writeFile(wb, "Template_Impor_PPh_21_Tahunan.xlsx");
+        }
 
+        function handlePph21ImportTahunan(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const data = new Uint8Array(e.target.result);
+                const workbook = XLSX.read(data, {type: 'array'});
+                const sheetName = workbook.SheetNames[0];
+                const worksheet = workbook.Sheets[sheetName];
+                const jsonData = XLSX.utils.sheet_to_json(worksheet);
+                processPph21ImportTahunan(jsonData);
+            };
+            reader.readAsArrayBuffer(file);
+        }
+
+        function processPph21ImportTahunan(data) {
+            lastPph21TahunanImportResults = data.map(row => {
+                const brutoSetahun = (parseFloat(row['Gaji/Pensiun Setahun']) || 0) + (parseFloat(row['Tunjangan PPh']) || 0) + (parseFloat(row['Tunjangan Lainnya']) || 0) + (parseFloat(row['Honorarium']) || 0) + (parseFloat(row['Premi Asuransi']) || 0) + (parseFloat(row['Natura']) || 0) + (parseFloat(row['Bonus/THR']) || 0);
+                
+                const statusPegawai = row['Status Pegawai (tetap/pensiunan)']?.toLowerCase() === 'pensiunan' ? 'pensiunan' : 'tetap';
+                const maxBiayaJabatan = statusPegawai === 'tetap' ? 6000000 : 2400000;
+                const biayaJabatan = Math.min(brutoSetahun * 0.05, maxBiayaJabatan);
+                
+                const iuranPensiun = parseFloat(row['Iuran Pensiun/THT']) || 0;
+                const zakat = parseFloat(row['Zakat/Sumbangan Wajib']) || 0;
+                const totalPengurang = biayaJabatan + iuranPensiun + zakat;
+
+                const nettoSetahun = brutoSetahun - totalPengurang;
+                
+                const statusKawin = row['Status Kawin (TK/K/KI)']?.toUpperCase() || 'TK';
+                const tanggungan = Math.min(3, Math.max(0, parseInt(row['Jml Tanggungan (0-3)']) || 0));
+                const ptkpTahunan = getPtkpTahunan(statusKawin, tanggungan) || 0;
+
+                const pkpSetahun = Math.max(0, Math.floor((nettoSetahun - ptkpTahunan) / 1000) * 1000);
+
+                let pphTerutang = 0;
+                let sisaPkp = pkpSetahun;
+                const tarifLayers = [{ limit: 60000000, rate: 0.05 }, { limit: 250000000, rate: 0.15 }, { limit: 500000000, rate: 0.25 }, { limit: 5000000000, rate: 0.30 }, { limit: Infinity, rate: 0.35 }];
+                let batasBawah = 0;
+                for (const layer of tarifLayers) {
+                    if (sisaPkp <= 0) break;
+                    const pkpDiLayer = Math.min(sisaPkp, layer.limit - batasBawah);
+                    pphTerutang += pkpDiLayer * layer.rate;
+                    sisaPkp -= pkpDiLayer;
+                    batasBawah = layer.limit;
+                }
+                
+                const pph21Dipotong = parseFloat(row['PPh 21 Dipotong (Jan-Nov)']) || 0;
+                const pph21MasaTerakhir = Math.round(pphTerutang - pph21Dipotong);
+
+                return {
+                    'NIK': row['NIK'],
+                    'Nama Pegawai': row['Nama Pegawai'],
+                    'Penghasilan Bruto Setahun': brutoSetahun,
+                    'Penghasilan Neto Setahun': nettoSetahun,
+                    'PKP Setahun': pkpSetahun,
+                    'PPh 21 Terutang Setahun': Math.round(pphTerutang),
+                    'PPh 21 Dipotong (Jan-Nov)': pph21Dipotong,
+                    'PPh 21 Masa Terakhir': pph21MasaTerakhir,
+                    'Status': pph21MasaTerakhir >= 0 ? 'Kurang Bayar' : 'Lebih Bayar'
+                };
+            });
+            displayPph21ImportResultsTahunan(lastPph21TahunanImportResults);
+        }
+
+        function displayPph21ImportResultsTahunan(results) {
+            const resultContainer = document.getElementById('import-result-pph21-tahunan');
+            const tableContainer = resultContainer.querySelector('.table-responsive > table');
+            tableContainer.innerHTML = `
+                <thead class="bg-gray-100"><tr>
+                    <th class="p-2 border">NIK</th>
+                    <th class="p-2 border">Nama</th>
+                    <th class="p-2 border">PKP Setahun</th>
+                    <th class="p-2 border">PPh Terutang Setahun</th>
+                    <th class="p-2 border">PPh Masa Terakhir</th>
+                    <th class="p-2 border">Status</th>
+                </tr></thead>
+                <tbody>${results.map(res => `<tr>
+                    <td class="p-2 border">${res['NIK']}</td>
+                    <td class="p-2 border">${res['Nama Pegawai']}</td>
+                    <td class="p-2 border text-right">${formatNumber(res['PKP Setahun'])}</td>
+                    <td class="p-2 border text-right">${formatNumber(res['PPh 21 Terutang Setahun'])}</td>
+                    <td class="p-2 border text-right font-semibold">${formatNumber(Math.abs(res['PPh 21 Masa Terakhir']))}</td>
+                    <td class="p-2 border text-center">${res['Status']}</td>
+                </tr>`).join('')}</tbody>`;
+            resultContainer.classList.remove('hidden');
+            document.getElementById('export-excel-btn-pph21-tahunan').onclick = () => exportPph21ResultsToExcelTahunan();
+        }
+
+        function exportPph21ResultsToExcelTahunan() {
+            const ws = XLSX.utils.json_to_sheet(lastPph21TahunanImportResults);
+            ws['!cols'] = Object.keys(lastPph21TahunanImportResults[0]).map(key => ({ wch: key.length > 20 ? 25 : 18 }));
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, "Hasil Impor PPh 21 Tahunan");
+            XLSX.writeFile(wb, "Hasil_Impor_PPh_21_Tahunan.xlsx");
+        }
+
+
+        // --- PPh Unifikasi LOGIC ---
         function setupUnifikasi() {
             const unifikasiContent = document.getElementById('unifikasi-content');
             let unifikasiTransactionCounter = 0;
@@ -697,6 +963,7 @@
                 '27-102-01': { category: 'PPh Pasal 15', desc: 'Pelayaran Dalam Negeri', rate: 1.2 },
                 '27-102-02': { category: 'PPh Pasal 15', desc: 'Penerbangan Dalam Negeri', rate: 1.8 },
                 '27-102-03': { category: 'PPh Pasal 15', desc: 'Pelayaran/Penerbangan Luar Negeri', rate: 2.64 },
+                '22-100-13': { category: 'PPh Pasal 22', desc: 'Pembelian oleh Badan Usaha Berupa Batubara, Mineral Logam dan Bukan Logam dari Badan atau Orang', rate: 1.5 },
                 '22-101-01': { category: 'PPh Pasal 22', desc: 'Impor dengan API', rate: 2.5 },
                 '22-101-02': { category: 'PPh Pasal 22', desc: 'Impor tanpa API', rate: 7.5 },
                 '22-401-01': { category: 'PPh Pasal 22', desc: 'Pembelian oleh Bendaharawan/BUMN/BUMD', rate: 1.5 },
@@ -743,7 +1010,16 @@
                 const newRow = document.createElement('tr');
                 newRow.className = 'transaction-row-unifikasi';
                 newRow.id = `row-unifikasi-${id}`;
-                newRow.innerHTML = `<td class="text-center text-sm text-gray-500">${id + 1}</td><td><input type="text" class="form-input invoice-no" placeholder="Opsional"></td><td><input type="text" class="form-input company-name" placeholder="Nama Perusahaan"></td><td><select class="form-select pph-type">${taxOptionsHtml}</select></td><td><input type="number" class="form-input pph-rate" step="0.01" placeholder="0"></td><td><input type="number" class="form-input dpp" placeholder="100000"></td><td><div class="flex items-center gap-2"><select class="form-select ppn-option"><option value="none">Tanpa PPN</option><option value="11">PPN 11%</option><option value="1.1">PPN 1.1%</option><option value="custom">PPN Custom</option></select><input type="number" class="form-input ppn-custom-rate hidden" placeholder="Tarif %"></div></td><td class="text-center"><button class="delete-btn" title="Hapus Baris"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg></button></td>`;
+                newRow.innerHTML = `
+                    <td class="text-center text-sm text-gray-500">${id + 1}</td>
+                    <td><input type="text" class="form-input invoice-no" placeholder="Opsional"></td>
+                    <td><input type="text" class="form-input company-name" placeholder="Nama Perusahaan"></td>
+                    <td><select class="form-select pph-type">${taxOptionsHtml}</select></td>
+                    <td><input type="number" class="form-input pph-rate" step="0.01" placeholder="0"></td>
+                    <td><input type="number" class="form-input dpp" placeholder="100000"></td>
+                    <td><select class="form-select calculation-method"><option value="gross">Gross</option><option value="grossup">Gross-up</option></select></td>
+                    <td><div class="flex items-center gap-2"><select class="form-select ppn-option"><option value="none">Tanpa PPN</option><option value="11">PPN 11%</option><option value="1.1">PPN 1.1%</option><option value="custom">PPN Custom</option></select><input type="number" class="form-input ppn-custom-rate hidden" placeholder="Tarif %"></div></td>
+                    <td class="text-center"><button class="delete-btn" title="Hapus Baris"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg></button></td>`;
                 rowsContainer.appendChild(newRow);
                 newRow.querySelector('.pph-type').addEventListener('change', () => updateUnifikasiPphRate(newRow));
                 newRow.querySelector('.ppn-option').addEventListener('change', () => handleUnifikasiPpnOptionChange(newRow));
@@ -775,39 +1051,63 @@
                     try {
                         const invoiceNo = row.querySelector('.invoice-no').value.trim();
                         const companyName = row.querySelector('.company-name').value.trim();
-                        const dpp = parseFloat(row.querySelector('.dpp').value);
-                        if (isNaN(dpp) || dpp <= 0) throw new Error(`DPP pada baris #${index + 1} tidak valid.`);
+                        const dppInput = parseFloat(row.querySelector('.dpp').value);
+                        if (isNaN(dppInput) || dppInput <= 0) throw new Error(`DPP pada baris #${index + 1} tidak valid.`);
+                        
                         const pphTypeSelect = row.querySelector('.pph-type');
                         const selectedTaxKey = pphTypeSelect.value;
                         if (!selectedTaxKey) throw new Error(`Jenis Pajak pada baris #${index + 1} belum dipilih.`);
                         
-                        const pphRate = parseFloat(row.querySelector('.pph-rate').value) / 100;
-                        if (isNaN(pphRate) || pphRate < 0) throw new Error(`Tarif PPh pada baris #${index + 1} tidak valid.`);
-                        const pph = dpp * pphRate;
+                        const pphRateValue = parseFloat(row.querySelector('.pph-rate').value);
+                        if (isNaN(pphRateValue) || pphRateValue < 0) throw new Error(`Tarif PPh pada baris #${index + 1} tidak valid.`);
+                        const pphRate = pphRateValue / 100;
+
                         const pphDesc = pphTypeSelect.options[pphTypeSelect.selectedIndex].text;
+                        const calculationMethod = row.querySelector('.calculation-method').value;
+
+                        let dppGrossup = dppInput;
+                        let pph = 0;
+
+                        if (calculationMethod === 'grossup') {
+                            if (pphRate >= 1) throw new Error(`Tarif PPh pada baris #${index + 1} harus di bawah 100% untuk metode Gross-up.`);
+                            dppGrossup = dppInput / (1 - pphRate);
+                        }
                         
+                        pph = dppGrossup * pphRate;
+
                         const ppnSelect = row.querySelector('.ppn-option');
                         let ppn = 0; let ppnDesc = '';
                         if (ppnSelect.value !== 'none') {
-                            let ppnRate = 0;
+                            let ppnRateValue = 0;
                             if (ppnSelect.value === 'custom') {
                                 const customPpnRate = parseFloat(row.querySelector('.ppn-custom-rate').value);
                                 if (isNaN(customPpnRate) || customPpnRate < 0) throw new Error(`Tarif PPN Custom pada baris #${index + 1} tidak valid.`);
-                                ppnRate = customPpnRate / 100;
-                                ppnDesc = `PPN ${customPpnRate}%`;
+                                ppnRateValue = customPpnRate;
                             } else {
-                                ppnRate = parseFloat(ppnSelect.value) / 100;
-                                ppnDesc = `PPN ${ppnSelect.value}%`;
+                                ppnRateValue = parseFloat(ppnSelect.value);
                             }
-                            ppn = dpp * ppnRate;
+                            const ppnRate = ppnRateValue / 100;
+                            ppn = dppGrossup * ppnRate; // PPN dihitung dari DPP Grossup
+                            ppnDesc = `PPN ${ppnRateValue}%`;
                         }
+                        
                         const roundedPph = Math.round(pph);
                         const roundedPpn = Math.round(ppn);
-                        const finalPayment = (dpp + roundedPpn - roundedPph);
+                        const finalPayment = dppGrossup + roundedPpn - roundedPph;
+
                         let fullDesc = pphDesc;
                         if (ppnSelect.value !== 'none') { fullDesc = fullDesc ? `${fullDesc} + ${ppnDesc}` : ppnDesc; }
                         
-                        allResults.push({ invoiceNo, companyName, description: fullDesc, dpp, ppn: roundedPpn, pph: roundedPph, actualPayment: finalPayment });
+                        allResults.push({ 
+                            invoiceNo, 
+                            companyName, 
+                            description: fullDesc, 
+                            dppInput: dppInput,
+                            dppGrossup: dppGrossup,
+                            ppn: roundedPpn, 
+                            pph: roundedPph, 
+                            actualPayment: finalPayment 
+                        });
                     } catch (e) {
                         showError('error-container-unifikasi', e.message);
                         hasError = true;
@@ -819,21 +1119,45 @@
                 }
             }
 
-                 function displayUnifikasiResults(results) {
-                      const resultContainer = document.getElementById('result-container-unifikasi');
-                      const resultBody = document.getElementById('result-table-body-unifikasi');
-                      const resultFoot = document.getElementById('result-table-foot-unifikasi');
-                      resultBody.innerHTML = ''; resultFoot.innerHTML = '';
-                      let totalDpp = 0, totalPpn = 0, totalPph = 0, totalActual = 0;
-                      results.forEach(res => {
-                          totalDpp += res.dpp; totalPpn += res.ppn; totalPph += res.pph; totalActual += res.actualPayment;
-                          resultBody.innerHTML += `<tr><td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${res.invoiceNo || '-'}</td><td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${res.companyName || '-'}</td><td class="px-6 py-4 whitespace-nowrap text-sm font-medium">${res.description}</td><td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-right">${formatNumber(res.dpp)}</td><td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-right">${formatNumber(res.ppn)}</td><td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-right">${formatNumber(res.pph)}</td><td class="px-6 py-4 whitespace-nowrap text-sm font-semibold text-right">${formatNumber(res.actualPayment)}</td></tr>`;
-                      });
-                      if (results.length > 1) {
-                          resultFoot.innerHTML = `<tr><td class="px-6 py-4 text-left text-sm font-bold" colspan="3">JUMLAH</td><td class="px-6 py-4 text-right text-sm font-bold">${formatNumber(totalDpp)}</td><td class="px-6 py-4 text-right text-sm font-bold">${formatNumber(totalPpn)}</td><td class="px-6 py-4 text-right text-sm font-bold">${formatNumber(totalPph)}</td><td class="px-6 py-4 text-right text-sm font-bold">${formatNumber(totalActual)}</td></tr>`;
-                      }
-                      resultContainer.classList.remove('hidden');
-                 }
+            function displayUnifikasiResults(results) {
+                const resultContainer = document.getElementById('result-container-unifikasi');
+                const resultBody = document.getElementById('result-table-body-unifikasi');
+                const resultFoot = document.getElementById('result-table-foot-unifikasi');
+                resultBody.innerHTML = ''; resultFoot.innerHTML = '';
+                let totalDppInput = 0, totalDppGrossup = 0, totalPpn = 0, totalPph = 0, totalActual = 0;
+                
+                results.forEach(res => {
+                    totalDppInput += res.dppInput; 
+                    totalDppGrossup += res.dppGrossup;
+                    totalPpn += res.ppn; 
+                    totalPph += res.pph; 
+                    totalActual += res.actualPayment;
+                    resultBody.innerHTML += `
+                        <tr>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${res.invoiceNo || '-'}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${res.companyName || '-'}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">${res.description}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-right">${formatNumber(res.dppInput)}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-right">${formatNumber(res.dppGrossup)}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-right">${formatNumber(res.ppn)}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-right">${formatNumber(res.pph)}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-semibold text-right">${formatNumber(res.actualPayment)}</td>
+                        </tr>`;
+                });
+                
+                if (results.length > 1) {
+                    resultFoot.innerHTML = `
+                        <tr>
+                            <td class="px-6 py-4 text-left text-sm font-bold" colspan="3">JUMLAH</td>
+                            <td class="px-6 py-4 text-right text-sm font-bold">${formatNumber(totalDppInput)}</td>
+                            <td class="px-6 py-4 text-right text-sm font-bold">${formatNumber(totalDppGrossup)}</td>
+                            <td class="px-6 py-4 text-right text-sm font-bold">${formatNumber(totalPpn)}</td>
+                            <td class="px-6 py-4 text-right text-sm font-bold">${formatNumber(totalPph)}</td>
+                            <td class="px-6 py-4 text-right text-sm font-bold">${formatNumber(totalActual)}</td>
+                        </tr>`;
+                }
+                resultContainer.classList.remove('hidden');
+            }
 
             function exportUnifikasiToExcel() {
                 if (!lastUnifikasiResults || lastUnifikasiResults.length === 0) {
@@ -844,14 +1168,15 @@
                     'No. Invoice': res.invoiceNo || '-',
                     'Nama Perusahaan': res.companyName || '-',
                     'Deskripsi': res.description,
-                    'DPP': res.dpp,
+                    'DPP (Input)': res.dppInput,
+                    'DPP (Gross-up)': res.dppGrossup,
                     'PPN': res.ppn,
                     'PPh': res.pph,
                     'Jumlah Tagihan/Pembayaran': res.actualPayment
                 }));
 
                 const ws = XLSX.utils.json_to_sheet(exportData);
-                ws['!cols'] = [{ wch: 15 }, { wch: 25 }, { wch: 40 }, { wch: 15 }, { wch: 15 }, { wch: 15 }, { wch: 25 }];
+                ws['!cols'] = [{ wch: 15 }, { wch: 25 }, { wch: 40 }, { wch: 15 }, { wch: 15 }, { wch: 15 }, { wch: 15 }, { wch: 25 }];
                 const wb = XLSX.utils.book_new();
                 XLSX.utils.book_append_sheet(wb, ws, "Hasil PPh Unifikasi");
                 XLSX.writeFile(wb, "Hasil_Perhitungan_PPh_Unifikasi.xlsx");
@@ -863,11 +1188,11 @@
                     return;
                 }
                 const { jsPDF } = window.jspdf;
-                const doc = new jsPDF();
+                const doc = new jsPDF({ orientation: 'landscape' });
 
                 doc.text("Hasil Perhitungan PPh Unifikasi", 14, 15);
 
-                const tableColumn = ["No. Invoice", "Nama Perusahaan", "Deskripsi", "DPP", "PPN", "PPh", "Jumlah"];
+                const tableColumn = ["No. Invoice", "Nama Perusahaan", "Deskripsi", "DPP (Input)", "DPP (Gross-up)", "PPN", "PPh", "Jumlah"];
                 const tableRows = [];
 
                 lastUnifikasiResults.forEach(res => {
@@ -875,7 +1200,8 @@
                         res.invoiceNo || '-',
                         res.companyName || '-',
                         res.description,
-                        formatNumber(res.dpp),
+                        formatNumber(res.dppInput),
+                        formatNumber(res.dppGrossup),
                         formatNumber(res.ppn),
                         formatNumber(res.pph),
                         formatNumber(res.actualPayment)
@@ -889,11 +1215,11 @@
                     startY: 20,
                     theme: 'striped',
                     headStyles: { fillColor: [79, 70, 229] }, // Indigo color
-                    styles: { halign: 'right' },
+                    styles: { halign: 'right', fontSize: 8 },
                     columnStyles: {
                         0: { halign: 'left' },
                         1: { halign: 'left' },
-                        2: { halign: 'left' }
+                        2: { halign: 'left', cellWidth: 50 },
                     }
                 });
 
@@ -980,6 +1306,93 @@
             });
         }
 
+        // --- XML GENERATOR LOGIC ---
+        function setupXmlGenerator() {
+            const downloadBtn = document.getElementById('xml-download-btn');
+            const resetBtn = document.getElementById('xml-reset-btn');
+
+            downloadBtn.addEventListener('click', generateAndDownloadXml);
+            resetBtn.addEventListener('click', resetXmlForm);
+            // Set default date on initial load
+            resetXmlForm();
+        }
+
+        function resetXmlForm() {
+            document.getElementById('xml-tin').value = '';
+            document.getElementById('xml-tax-month').value = '';
+            document.getElementById('xml-tax-year').value = '';
+            document.getElementById('xml-trx-code').value = 'Normal';
+            document.getElementById('xml-buyer-name').value = '';
+            document.getElementById('xml-buyer-id-opt').value = 'NIK';
+            document.getElementById('xml-buyer-id').value = '';
+            document.getElementById('xml-good-service-opt').value = '';
+            document.getElementById('xml-serial-no').value = '';
+            document.getElementById('xml-trx-date').value = new Date().toISOString().split('T')[0];
+            document.getElementById('xml-tax-base').value = '';
+            document.getElementById('xml-other-tax-base').value = '';
+            document.getElementById('xml-vat').value = '';
+            document.getElementById('xml-stlg').value = '';
+            document.getElementById('xml-info').value = '';
+            clearError('xml-error-container');
+        }
+
+        function generateAndDownloadXml() {
+            clearError('xml-error-container');
+            try {
+                const tin = document.getElementById('xml-tin').value;
+                const taxMonth = document.getElementById('xml-tax-month').value;
+                const taxYear = document.getElementById('xml-tax-year').value;
+                
+                // Simple validation
+                if (!tin || tin.length !== 16 || !/^\d+$/.test(tin)) {
+                    throw new Error("TIN/NPWP harus 16 digit angka.");
+                }
+                 if (!taxMonth || taxMonth < 1 || taxMonth > 12) {
+                    throw new Error("Bulan Pajak tidak valid.");
+                }
+                 if (!taxYear || taxYear < 2000) {
+                    throw new Error("Tahun Pajak tidak valid.");
+                }
+
+                const xmlString = `<?xml version="1.0" encoding="UTF-8"?>
+<RetailInvoiceBulk>
+    <TIN>${tin}</TIN>
+    <TaxPeriodMonth>${taxMonth}</TaxPeriodMonth>
+    <TaxPeriodYear>${taxYear}</TaxPeriodYear>
+    <ListOfRetailInvoice>
+        <RetailInvoice>
+            <TrxCode>${document.getElementById('xml-trx-code').value}</TrxCode>
+            <BuyerName>${document.getElementById('xml-buyer-name').value}</BuyerName>
+            <BuyerIdOpt>${document.getElementById('xml-buyer-id-opt').value}</BuyerIdOpt>
+            <BuyerIdNumber>${document.getElementById('xml-buyer-id').value}</BuyerIdNumber>
+            <GoodServiceOpt>${document.getElementById('xml-good-service-opt').value}</GoodServiceOpt>
+            <SerialNo>${document.getElementById('xml-serial-no').value}</SerialNo>
+            <TransactionDate>${document.getElementById('xml-trx-date').value}</TransactionDate>
+            <TaxBaseSellingPrice>${document.getElementById('xml-tax-base').value}</TaxBaseSellingPrice>
+            <OtherTaxBaseSellingPrice>${document.getElementById('xml-other-tax-base').value}</OtherTaxBaseSellingPrice>
+            <VAT>${document.getElementById('xml-vat').value}</VAT>
+            <STLG>${document.getElementById('xml-stlg').value}</STLG>
+            <Info>${document.getElementById('xml-info').value}</Info>
+        </RetailInvoice>
+    </ListOfRetailInvoice>
+</RetailInvoiceBulk>`;
+
+                const blob = new Blob([xmlString], { type: 'application/xml' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `RetailInvoice_${tin}_${taxMonth}_${taxYear}.xml`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+
+            } catch (e) {
+                showError('xml-error-container', e.message);
+            }
+        }
+
+
         // --- MAIN APP INITIALIZATION ---
         const tabs = document.querySelectorAll('.tab-btn');
         const tabContents = document.querySelectorAll('.tab-content');
@@ -997,6 +1410,7 @@
         setupUnifikasi();
         setupTerTab();
         setupDonasiTab();
+        setupXmlGenerator();
     });
     </script>
 </body>
