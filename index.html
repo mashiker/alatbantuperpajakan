@@ -193,10 +193,11 @@
                         <div class="space-y-6">
                             <!-- A. Informasi Pegawai -->
                             <div class="space-y-4 p-4 border rounded-lg">
-                                <h4 class="text-lg font-semibold border-b pb-2">A. Informasi Pegawai</h4>
+                                <h4 class="text-lg font-semibold border-b pb-2">A. Informasi Pegawai & Metode</h4>
                                 <div><label for="status-pegawai-tahunan" class="block text-sm font-medium text-gray-700">Status Pegawai</label><select id="status-pegawai-tahunan" class="form-select mt-1"><option value="tetap">Pegawai Tetap</option><option value="pensiunan">Pensiunan</option></select></div>
                                 <div><label for="status-kawin-tahunan" class="block text-sm font-medium text-gray-700">Status Perkawinan</label><select id="status-kawin-tahunan" class="form-select mt-1"><option value="TK">Tidak Kawin</option><option value="K">Kawin</option><option value="KI">Kawin (Penghasilan Istri Digabung)</option></select></div>
                                 <div><label for="tanggungan-tahunan" class="block text-sm font-medium text-gray-700">Jumlah Tanggungan</label><input type="number" id="tanggungan-tahunan" class="form-input mt-1" min="0" max="3" value="0"></div>
+                                <div><label class="block text-sm font-medium text-gray-700 mt-2">Metode Tunjangan Pajak</label><div class="mt-2 flex gap-4"><label class="inline-flex items-center"><input type="radio" name="tax-method-tahunan" value="gross" checked> <span class="ml-2">Gross</span></label><label class="inline-flex items-center"><input type="radio" name="tax-method-tahunan" value="gross-up"> <span class="ml-2">Gross-up</span></label></div></div>
                             </div>
                             
                             <!-- B. Penghasilan Bruto Setahun -->
@@ -501,15 +502,19 @@
             pph21Content.querySelector('#import-excel-pph21').addEventListener('change', handlePph21Import);
 
             // Tahunan
-            pph21Content.querySelectorAll('#status-pegawai-tahunan, #status-kawin-tahunan').forEach(select => select.addEventListener('change', updateTahunanTotals));
-            pph21Content.querySelectorAll('.p21-income-tahunan, .p21-pengurang-tahunan, #tanggungan-tahunan').forEach(input => input.addEventListener('input', updateTahunanTotals));
+            pph21Content.querySelectorAll('#status-pegawai-tahunan, #status-kawin-tahunan, #tanggungan-tahunan').forEach(el => el.addEventListener('change', updateTahunanTotals));
+            pph21Content.querySelectorAll('.p21-income-tahunan, .p21-pengurang-tahunan').forEach(input => input.addEventListener('input', updateTahunanTotals));
+            pph21Content.querySelectorAll('input[name="tax-method-tahunan"]').forEach(radio => radio.addEventListener('change', handleTaxMethodChangeTahunan));
             pph21Content.querySelector('#calculateBtn-pph21-tahunan').addEventListener('click', calculatePph21AkhirTahun);
             pph21Content.querySelector('#resetBtn-pph21-tahunan').addEventListener('click', resetFormTahunan);
-            updateTahunanTotals();
-
+            
             // Tahunan - Massal
             pph21Content.querySelector('#template-excel-btn-pph21-tahunan').addEventListener('click', downloadPph21TemplateTahunan);
             pph21Content.querySelector('#import-excel-pph21-tahunan').addEventListener('change', handlePph21ImportTahunan);
+
+            // Initial calls
+            handleTaxMethodChangeTahunan();
+            updateTahunanTotals();
         }
 
         function calculateTer(bruto, ptkpStatus) {
@@ -699,6 +704,19 @@
             return ptkpMatrix[statusKawin] ? ptkpMatrix[statusKawin][tanggungan] : null;
         }
 
+        function handleTaxMethodChangeTahunan() {
+            const isGrossUp = document.querySelector('input[name="tax-method-tahunan"]:checked').value === 'gross-up';
+            const tunjanganPphInput = document.getElementById('tunjangan-pph-tahunan');
+            tunjanganPphInput.disabled = isGrossUp;
+            if (isGrossUp) {
+                tunjanganPphInput.classList.add('bg-gray-100');
+                tunjanganPphInput.value = '';
+            } else {
+                tunjanganPphInput.classList.remove('bg-gray-100');
+            }
+            updateTahunanTotals();
+        }
+
         function updateTahunanTotals() {
             let bruto = 0;
             document.querySelectorAll('.p21-income-tahunan').forEach(input => {
@@ -725,57 +743,110 @@
                     el.value = el.id === 'tanggungan-tahunan' ? '0' : '';
                 }
             });
-            updateTahunanTotals(); // To reset calculated fields
+            document.querySelector('input[name="tax-method-tahunan"][value="gross"]').checked = true;
+            handleTaxMethodChangeTahunan(); // This will also call updateTahunanTotals
             document.getElementById('result-pph21-akhirtahun').innerHTML = `<h4 class="text-lg font-semibold border-b pb-2 mb-4">E. Hasil Perhitungan</h4><div class="text-center text-gray-500">Hasil perhitungan akan muncul di sini.</div>`;
             clearError('error-container-pph21-tahunan');
         }
 
+        function calculatePphTerutang(pkp) {
+            let pph = 0;
+            let sisaPkp = pkp;
+            const tarifLayers = [
+                { limit: 60000000, rate: 0.05 }, { limit: 250000000, rate: 0.15 },
+                { limit: 500000000, rate: 0.25 }, { limit: 5000000000, rate: 0.30 },
+                { limit: Infinity, rate: 0.35 }
+            ];
+            let batasBawah = 0;
+            for (const layer of tarifLayers) {
+                if (sisaPkp <= 0) break;
+                const pkpDiLayer = Math.min(sisaPkp, layer.limit - batasBawah);
+                pph += pkpDiLayer * layer.rate;
+                sisaPkp -= pkpDiLayer;
+                batasBawah = layer.limit;
+            }
+            return pph;
+        }
+
+        function calculateGrossUpTahunan(baseBruto, pengurangLain, ptkp, statusPegawai) {
+            let tunjanganPph = 0;
+            const maxBiayaJabatan = statusPegawai === 'tetap' ? 6000000 : 2400000;
+
+            for(let i=0; i < 10; i++) {
+                const brutoSetahun = baseBruto + tunjanganPph;
+                const biayaJabatan = Math.min(brutoSetahun * 0.05, maxBiayaJabatan);
+                const nettoSetahun = brutoSetahun - biayaJabatan - pengurangLain;
+                const pkpSetahun = Math.max(0, Math.floor((nettoSetahun - ptkp) / 1000) * 1000);
+                const pphTerutang = calculatePphTerutang(pkpSetahun);
+
+                if (Math.abs(pphTerutang - tunjanganPph) < 1) {
+                    tunjanganPph = pphTerutang;
+                    break;
+                }
+                tunjanganPph = pphTerutang;
+            }
+            return { tunjanganPph: Math.round(tunjanganPph), brutoSetahun: baseBruto + Math.round(tunjanganPph) };
+        }
+
         function calculatePph21AkhirTahun() {
             clearError('error-container-pph21-tahunan');
-            // Recalculate values to ensure they are numeric
-            let brutoSetahun = 0;
+            
+            const isGrossUp = document.querySelector('input[name="tax-method-tahunan"]:checked').value === 'gross-up';
+            
+            let baseBrutoSetahun = 0;
             document.querySelectorAll('.p21-income-tahunan').forEach(input => {
-                brutoSetahun += parseFloat(input.value) || 0;
+                if(input.id !== 'tunjangan-pph-tahunan') {
+                    baseBrutoSetahun += parseFloat(input.value) || 0;
+                }
             });
 
-            const statusPegawai = document.getElementById('status-pegawai-tahunan').value;
-            const maxBiayaJabatan = statusPegawai === 'tetap' ? 6000000 : 2400000;
-            const biayaJabatan = Math.min(brutoSetahun * 0.05, maxBiayaJabatan);
             const iuranPensiun = parseFloat(document.getElementById('iuran-pensiun-tahunan').value) || 0;
             const zakat = parseFloat(document.getElementById('zakat-tahunan').value) || 0;
-            const totalPengurang = biayaJabatan + iuranPensiun + zakat;
-
+            const pengurangLain = iuranPensiun + zakat;
+            
             const pph21Dipotong = parseFloat(document.getElementById('pph21-dipotong-sebelumnya').value) || 0;
             const resultDiv = document.getElementById('result-pph21-akhirtahun');
             
+            const statusPegawai = document.getElementById('status-pegawai-tahunan').value;
             const statusKawin = document.getElementById('status-kawin-tahunan').value;
             const tanggungan = parseInt(document.getElementById('tanggungan-tahunan').value) || 0;
             const ptkpTahunan = getPtkpTahunan(statusKawin, tanggungan);
+            
             if (ptkpTahunan === null) {
                 showError('error-container-pph21-tahunan', 'Status kawin atau tanggungan tidak valid.');
                 return;
             }
 
+            let brutoSetahun = 0;
+            let tunjanganPph = 0;
+
+            if (isGrossUp) {
+                const grossUpResult = calculateGrossUpTahunan(baseBrutoSetahun, pengurangLain, ptkpTahunan, statusPegawai);
+                tunjanganPph = grossUpResult.tunjanganPph;
+                brutoSetahun = grossUpResult.brutoSetahun;
+                document.getElementById('tunjangan-pph-tahunan').value = tunjanganPph;
+            } else {
+                tunjanganPph = parseFloat(document.getElementById('tunjangan-pph-tahunan').value) || 0;
+                brutoSetahun = baseBrutoSetahun + tunjanganPph;
+            }
+
+            // --- Final Calculation using the determined Bruto ---
+            const maxBiayaJabatan = statusPegawai === 'tetap' ? 6000000 : 2400000;
+            const biayaJabatan = Math.min(brutoSetahun * 0.05, maxBiayaJabatan);
+            const totalPengurang = biayaJabatan + pengurangLain;
             const nettoSetahun = brutoSetahun - totalPengurang;
             const pkpSetahun = Math.max(0, Math.floor((nettoSetahun - ptkpTahunan) / 1000) * 1000);
 
-            let pphTerutang = 0;
-            let sisaPkp = pkpSetahun;
-            let detailPerhitungan = '';
-            const tarifLayers = [
-                { limit: 60000000, rate: 0.05 },
-                { limit: 250000000, rate: 0.15 },
-                { limit: 500000000, rate: 0.25 },
-                { limit: 5000000000, rate: 0.30 },
-                { limit: Infinity, rate: 0.35 }
-            ];
-            let batasBawah = 0;
+            const pphTerutang = calculatePphTerutang(pkpSetahun);
             
+            let detailPerhitungan = '';
+            let sisaPkp = pkpSetahun;
+            const tarifLayers = [ { limit: 60000000, rate: 0.05 }, { limit: 250000000, rate: 0.15 }, { limit: 500000000, rate: 0.25 }, { limit: 5000000000, rate: 0.30 }, { limit: Infinity, rate: 0.35 }];
+            let batasBawah = 0;
             for (const layer of tarifLayers) {
                 if (sisaPkp <= 0) break;
                 const pkpDiLayer = Math.min(sisaPkp, layer.limit - batasBawah);
                 const pajakDiLayer = pkpDiLayer * layer.rate;
-                pphTerutang += pajakDiLayer;
                 if (pajakDiLayer > 0) {
                     detailPerhitungan += `<li class="flex justify-between"><span>${(layer.rate * 100)}% &times; Rp ${formatNumber(pkpDiLayer)}</span> <span>= Rp ${formatNumber(pajakDiLayer)}</span></li>`;
                 }
@@ -783,44 +854,39 @@
                 batasBawah = layer.limit;
             }
 
-            const pph21MasaTerakhir = pphTerutang - pph21Dipotong;
+            const pph21MasaTerakhir = Math.round(pphTerutang - pph21Dipotong);
             const statusPotong = pph21MasaTerakhir >= 0 ? "Kurang Bayar" : "Lebih Bayar";
+
+            // Update UI
+            updateTahunanTotals(); // To update displayed totals based on final bruto
+            document.getElementById('total-bruto-tahunan').value = `Rp ${formatNumber(brutoSetahun)}`;
 
             resultDiv.innerHTML = `
                 <h4 class="font-bold text-lg mb-3 border-b pb-2">E. Hasil Perhitungan</h4>
                 <div class="space-y-2 text-sm">
-                    <!-- Step 1: Bruto to Neto -->
                     <div class="font-semibold text-gray-700">1. Penghasilan Neto Setahun</div>
                     <div class="pl-4 space-y-1 text-xs">
                         <div class="flex justify-between"><span>Penghasilan Bruto Setahun</span> <span>Rp ${formatNumber(brutoSetahun)}</span></div>
                         <div class="flex justify-between"><span>Total Pengurang</span> <span>- Rp ${formatNumber(totalPengurang)}</span></div>
                         <div class="flex justify-between font-bold border-t pt-1 mt-1 text-sm"><span>Penghasilan Neto Setahun</span> <span>Rp ${formatNumber(nettoSetahun)}</span></div>
                     </div>
-
-                    <!-- Step 2: Neto to PKP -->
                     <div class="font-semibold text-gray-700 pt-3">2. Penghasilan Kena Pajak (PKP)</div>
                     <div class="pl-4 space-y-1 text-xs">
                         <div class="flex justify-between"><span>Penghasilan Neto Setahun</span> <span>Rp ${formatNumber(nettoSetahun)}</span></div>
                         <div class="flex justify-between"><span>PTKP</span> <span>- Rp ${formatNumber(ptkpTahunan)}</span></div>
                         <div class="flex justify-between font-bold border-t pt-1 mt-1 text-sm"><span>PKP Setahun (Dibulatkan)</span> <span>Rp ${formatNumber(pkpSetahun)}</span></div>
                     </div>
-
-                    <!-- Step 3: PPh Terutang -->
                     <div class="font-semibold text-gray-700 pt-3">3. PPh 21 Terutang Setahun (Tarif Psl. 17)</div>
                     <div class="pl-4">
                         <ul class="space-y-1 text-xs">${detailPerhitungan || '<li>Tidak ada PPh terutang.</li>'}</ul>
-                        <div class="flex justify-between font-bold border-t pt-1 mt-1 text-sm"><span>Total PPh Terutang Setahun</span> <span>Rp ${formatNumber(pphTerutang)}</span></div>
+                        <div class="flex justify-between font-bold border-t pt-1 mt-1 text-sm"><span>Total PPh Terutang Setahun</span> <span>Rp ${formatNumber(Math.round(pphTerutang))}</span></div>
                     </div>
-
-                    <!-- Step 4: PPh Masa Terakhir -->
                     <div class="font-semibold text-gray-700 pt-3">4. PPh 21 Masa Pajak Terakhir</div>
                     <div class="pl-4 space-y-1 text-xs">
-                        <div class="flex justify-between"><span>PPh Terutang Setahun</span> <span>Rp ${formatNumber(pphTerutang)}</span></div>
+                        <div class="flex justify-between"><span>PPh Terutang Setahun</span> <span>Rp ${formatNumber(Math.round(pphTerutang))}</span></div>
                         <div class="flex justify-between"><span>Telah Dipotong (Jan-Nov)</span> <span>- Rp ${formatNumber(pph21Dipotong)}</span></div>
                     </div>
                 </div>
-
-                <!-- Final Result -->
                 <div class="mt-4 pt-4 border-t-2 border-indigo-500">
                     <div class="flex justify-between items-center">
                         <span class="text-base font-semibold">PPh 21 Masa Pajak Terakhir</span>
@@ -836,9 +902,9 @@
         
         // --- PPh 21 Tahunan Massal ---
         function downloadPph21TemplateTahunan() {
-            const headers = [['NIK', 'Nama Pegawai', 'Status Pegawai (tetap/pensiunan)', 'Status Kawin (TK/K/KI)', 'Jml Tanggungan (0-3)', 'Gaji/Pensiun Setahun', 'Tunjangan PPh', 'Tunjangan Lainnya', 'Honorarium', 'Premi Asuransi', 'Natura', 'Bonus/THR', 'Iuran Pensiun/THT', 'Zakat/Sumbangan Wajib', 'PPh 21 Dipotong (Jan-Nov)']];
+            const headers = [['NIK', 'Nama Pegawai', 'Status Pegawai (tetap/pensiunan)', 'Status Kawin (TK/K/KI)', 'Jml Tanggungan (0-3)', 'Metode (GROSS/GROSSUP)', 'Gaji/Pensiun Setahun', 'Tunjangan PPh (jika GROSS)', 'Tunjangan Lainnya', 'Honorarium', 'Premi Asuransi', 'Natura', 'Bonus/THR', 'Iuran Pensiun/THT', 'Zakat/Sumbangan Wajib', 'PPh 21 Dipotong (Jan-Nov)']];
             const ws = XLSX.utils.aoa_to_sheet(headers);
-            ws['!cols'] = Array(headers[0].length).fill(0).map((_, i) => ({ wch: [18, 25, 20, 20, 18, 20, 15, 15, 15, 15, 15, 15, 18, 22, 25][i] }));
+            ws['!cols'] = Array(headers[0].length).fill(0).map((_, i) => ({ wch: [18, 25, 20, 20, 18, 22, 20, 25, 15, 15, 15, 15, 15, 18, 22, 25][i] }));
             const wb = XLSX.utils.book_new();
             XLSX.utils.book_append_sheet(wb, ws, "Template Impor Tahunan");
             XLSX.writeFile(wb, "Template_Impor_PPh_21_Tahunan.xlsx");
@@ -861,44 +927,45 @@
 
         function processPph21ImportTahunan(data) {
             lastPph21TahunanImportResults = data.map(row => {
-                const brutoSetahun = (parseFloat(row['Gaji/Pensiun Setahun']) || 0) + (parseFloat(row['Tunjangan PPh']) || 0) + (parseFloat(row['Tunjangan Lainnya']) || 0) + (parseFloat(row['Honorarium']) || 0) + (parseFloat(row['Premi Asuransi']) || 0) + (parseFloat(row['Natura']) || 0) + (parseFloat(row['Bonus/THR']) || 0);
-                
-                const statusPegawai = row['Status Pegawai (tetap/pensiunan)']?.toLowerCase() === 'pensiunan' ? 'pensiunan' : 'tetap';
-                const maxBiayaJabatan = statusPegawai === 'tetap' ? 6000000 : 2400000;
-                const biayaJabatan = Math.min(brutoSetahun * 0.05, maxBiayaJabatan);
-                
+                const method = row['Metode (GROSS/GROSSUP)']?.trim().toUpperCase() === 'GROSSUP' ? 'gross-up' : 'gross';
+                const baseBruto = (parseFloat(row['Gaji/Pensiun Setahun']) || 0) + (parseFloat(row['Tunjangan Lainnya']) || 0) + (parseFloat(row['Honorarium']) || 0) + (parseFloat(row['Premi Asuransi']) || 0) + (parseFloat(row['Natura']) || 0) + (parseFloat(row['Bonus/THR']) || 0);
+
                 const iuranPensiun = parseFloat(row['Iuran Pensiun/THT']) || 0;
                 const zakat = parseFloat(row['Zakat/Sumbangan Wajib']) || 0;
-                const totalPengurang = biayaJabatan + iuranPensiun + zakat;
+                const pengurangLain = iuranPensiun + zakat;
 
-                const nettoSetahun = brutoSetahun - totalPengurang;
-                
+                const statusPegawai = row['Status Pegawai (tetap/pensiunan)']?.toLowerCase() === 'pensiunan' ? 'pensiunan' : 'tetap';
                 const statusKawin = row['Status Kawin (TK/K/KI)']?.toUpperCase() || 'TK';
                 const tanggungan = Math.min(3, Math.max(0, parseInt(row['Jml Tanggungan (0-3)']) || 0));
                 const ptkpTahunan = getPtkpTahunan(statusKawin, tanggungan) || 0;
 
-                const pkpSetahun = Math.max(0, Math.floor((nettoSetahun - ptkpTahunan) / 1000) * 1000);
+                let brutoSetahun = 0;
+                let tunjanganPph = 0;
 
-                let pphTerutang = 0;
-                let sisaPkp = pkpSetahun;
-                const tarifLayers = [{ limit: 60000000, rate: 0.05 }, { limit: 250000000, rate: 0.15 }, { limit: 500000000, rate: 0.25 }, { limit: 5000000000, rate: 0.30 }, { limit: Infinity, rate: 0.35 }];
-                let batasBawah = 0;
-                for (const layer of tarifLayers) {
-                    if (sisaPkp <= 0) break;
-                    const pkpDiLayer = Math.min(sisaPkp, layer.limit - batasBawah);
-                    pphTerutang += pkpDiLayer * layer.rate;
-                    sisaPkp -= pkpDiLayer;
-                    batasBawah = layer.limit;
+                if (method === 'gross-up') {
+                    const grossUpResult = calculateGrossUpTahunan(baseBruto, pengurangLain, ptkpTahunan, statusPegawai);
+                    tunjanganPph = grossUpResult.tunjanganPph;
+                    brutoSetahun = grossUpResult.brutoSetahun;
+                } else {
+                    tunjanganPph = parseFloat(row['Tunjangan PPh (jika GROSS)']) || 0;
+                    brutoSetahun = baseBruto + tunjanganPph;
                 }
-                
+
+                const maxBiayaJabatan = statusPegawai === 'tetap' ? 6000000 : 2400000;
+                const biayaJabatan = Math.min(brutoSetahun * 0.05, maxBiayaJabatan);
+                const totalPengurang = biayaJabatan + pengurangLain;
+                const nettoSetahun = brutoSetahun - totalPengurang;
+                const pkpSetahun = Math.max(0, Math.floor((nettoSetahun - ptkpTahunan) / 1000) * 1000);
+                const pphTerutang = calculatePphTerutang(pkpSetahun);
                 const pph21Dipotong = parseFloat(row['PPh 21 Dipotong (Jan-Nov)']) || 0;
                 const pph21MasaTerakhir = Math.round(pphTerutang - pph21Dipotong);
 
                 return {
                     'NIK': row['NIK'],
                     'Nama Pegawai': row['Nama Pegawai'],
+                    'Metode': method.toUpperCase(),
+                    'Tunjangan PPh': tunjanganPph,
                     'Penghasilan Bruto Setahun': brutoSetahun,
-                    'Penghasilan Neto Setahun': nettoSetahun,
                     'PKP Setahun': pkpSetahun,
                     'PPh 21 Terutang Setahun': Math.round(pphTerutang),
                     'PPh 21 Dipotong (Jan-Nov)': pph21Dipotong,
@@ -916,16 +983,16 @@
                 <thead class="bg-gray-100"><tr>
                     <th class="p-2 border">NIK</th>
                     <th class="p-2 border">Nama</th>
-                    <th class="p-2 border">PKP Setahun</th>
-                    <th class="p-2 border">PPh Terutang Setahun</th>
+                    <th class="p-2 border">Metode</th>
+                    <th class="p-2 border">Tunjangan PPh</th>
                     <th class="p-2 border">PPh Masa Terakhir</th>
                     <th class="p-2 border">Status</th>
                 </tr></thead>
                 <tbody>${results.map(res => `<tr>
                     <td class="p-2 border">${res['NIK']}</td>
                     <td class="p-2 border">${res['Nama Pegawai']}</td>
-                    <td class="p-2 border text-right">${formatNumber(res['PKP Setahun'])}</td>
-                    <td class="p-2 border text-right">${formatNumber(res['PPh 21 Terutang Setahun'])}</td>
+                    <td class="p-2 border text-center">${res['Metode']}</td>
+                    <td class="p-2 border text-right">${formatNumber(res['Tunjangan PPh'])}</td>
                     <td class="p-2 border text-right font-semibold">${formatNumber(Math.abs(res['PPh 21 Masa Terakhir']))}</td>
                     <td class="p-2 border text-center">${res['Status']}</td>
                 </tr>`).join('')}</tbody>`;
@@ -934,8 +1001,20 @@
         }
 
         function exportPph21ResultsToExcelTahunan() {
-            const ws = XLSX.utils.json_to_sheet(lastPph21TahunanImportResults);
-            ws['!cols'] = Object.keys(lastPph21TahunanImportResults[0]).map(key => ({ wch: key.length > 20 ? 25 : 18 }));
+            const exportData = lastPph21TahunanImportResults.map(res => ({
+                'NIK': res['NIK'],
+                'Nama Pegawai': res['Nama Pegawai'],
+                'Metode': res['Metode'],
+                'Tunjangan PPh': res['Tunjangan PPh'],
+                'Penghasilan Bruto Setahun': res['Penghasilan Bruto Setahun'],
+                'PKP Setahun': res['PKP Setahun'],
+                'PPh 21 Terutang Setahun': res['PPh 21 Terutang Setahun'],
+                'PPh 21 Dipotong (Jan-Nov)': res['PPh 21 Dipotong (Jan-Nov)'],
+                'PPh 21 Masa Terakhir': res['PPh 21 Masa Terakhir'],
+                'Status': res['Status']
+            }));
+            const ws = XLSX.utils.json_to_sheet(exportData);
+            ws['!cols'] = Object.keys(exportData[0]).map(key => ({ wch: key.length > 20 ? 25 : 18 }));
             const wb = XLSX.utils.book_new();
             XLSX.utils.book_append_sheet(wb, ws, "Hasil Impor PPh 21 Tahunan");
             XLSX.writeFile(wb, "Hasil_Impor_PPh_21_Tahunan.xlsx");
